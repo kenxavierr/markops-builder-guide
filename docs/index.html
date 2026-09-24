@@ -1,213 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MarkOps Builder Guide</title>
   <style>
-    :root {
-      --bg: #080d18;
-      --sidebar: #0d1424;
-      --panel: #111a2c;
-      --panel-strong: #17233a;
-      --text: #e5edf8;
-      --muted: #91a4bd;
-      --border: #263750;
-      --amp: #c084fc;
-      --sql: #38bdf8;
-      --green: #86efac;
-      --yellow: #fde047;
-      --cyan: #67e8f9;
-      --orange: #fb923c;
-      --code: #070b14;
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      color: var(--text);
-      background: var(--bg);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.65;
-    }
-
-    .app-shell { display: grid; grid-template-columns: 270px minmax(0, 1fr); min-height: 100vh; }
-    .sidebar {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
-      padding: 26px 18px;
-      background: var(--sidebar);
-      border-right: 1px solid var(--border);
-    }
-    .brand { margin: 0 0 24px; font-weight: 800; font-size: 1.05rem; color: #f8fafc; }
-    .brand span { color: var(--sql); }
-    .lesson-nav { display: grid; gap: 6px; }
-    .lesson-nav a { color: var(--muted); padding: 9px 11px; border-radius: 7px; font-size: .9rem; text-decoration: none; }
-    .lesson-nav a:hover, .lesson-nav a.active { color: #fff; background: var(--panel-strong); }
-    .progress { margin-top: 28px; padding: 14px; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-size: .8rem; }
-    .progress-bar { height: 5px; margin-top: 9px; background: #263750; border-radius: 99px; overflow: hidden; }
-    .progress-bar span { display: block; width: 0; height: 100%; background: linear-gradient(90deg, var(--amp), var(--sql)); transition: width .2s ease; }
-
-    .main { min-width: 0; }
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: center;
-      padding: 12px clamp(20px, 5vw, 64px);
-      background: rgba(8, 13, 24, .9);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-    }
-    .topbar small { color: var(--muted); }
-    .topbar a { color: var(--sql); text-decoration: none; font-size: .85rem; }
-    .content { max-width: 1000px; margin: 0 auto; padding: 42px clamp(20px, 5vw, 64px) 90px; }
-    .eyebrow { display: inline-block; color: var(--sql); background: #082f49; border: 1px solid #075985; border-radius: 99px; padding: 4px 11px; font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-    h1, h2, h3 { color: #f8fafc; line-height: 1.25; }
-    h1 { margin: 13px 0; font-size: clamp(2rem, 5vw, 3.5rem); }
-    h2 { margin: 0; font-size: 1.45rem; }
-    h3 { margin-top: 28px; font-size: 1.12rem; }
-    p, li { color: #cbd5e1; }
-    a { color: #7dd3fc; }
-    .intro { max-width: 760px; color: var(--muted); font-size: 1.05rem; }
-    .lesson {
-      scroll-margin-top: 76px;
-      margin: 42px 0;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: rgba(17, 26, 44, .72);
-      overflow: hidden;
-    }
-    .lesson-header {
-      position: sticky;
-      top: 53px;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 15px 20px;
-      background: rgba(23, 35, 58, .96);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(10px);
-    }
-    .lesson-number { color: var(--amp); font: 800 .76rem ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; }
-    .lesson-body { padding: 5px 20px 24px; }
-    .lesson-summary { color: var(--muted); font-size: .9rem; }
-    details { border-top: 1px solid rgba(38, 55, 80, .75); }
-    details:first-of-type { border-top: 0; }
-    summary { cursor: pointer; padding: 18px 2px; color: #f8fafc; font-weight: 700; list-style-position: inside; }
-    summary:hover { color: var(--sql); }
-    details[open] summary { color: var(--sql); }
-    .note { padding: 12px 15px; margin: 13px 0; color: #cbd5e1; background: #0c1627; border-left: 3px solid var(--amp); border-radius: 5px; }
-
-    .code-card { margin: 18px 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--code); }
-    .code-card.ampscript { border-top: 3px solid var(--amp); }
-    .code-card.sql { border-top: 3px solid var(--sql); }
-    .code-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 13px; background: #111827; border-bottom: 1px solid var(--border); }
-    .code-label { font: 800 .73rem ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; }
-    .ampscript .code-label { color: var(--amp); }
-    .sql .code-label { color: var(--sql); }
-    .copy-button { cursor: pointer; padding: 5px 10px; color: #e2e8f0; background: #1e293b; border: 1px solid #475569; border-radius: 5px; font-size: .77rem; }
-    .copy-button:hover { background: #334155; }
-    .code-scroll { overflow-x: auto; }
-    pre { margin: 0; padding: 15px 17px; min-width: max-content; color: #e2e8f0; font: .88rem/1.7 "SFMono-Regular", Consolas, monospace; counter-reset: line; }
-    .code-line { display: block; min-height: 1.7em; }
-    .code-line::before { counter-increment: line; content: counter(line); display: inline-block; width: 3ch; margin-right: 2ch; color: #475569; text-align: right; user-select: none; }
-    .tok-keyword { color: var(--amp); font-weight: 700; }
-    .tok-variable { color: var(--yellow); }
-    .tok-string { color: var(--green); }
-    .tok-function { color: var(--cyan); }
-    .tok-comment { color: #64748b; font-style: italic; }
-    .tok-delimiter { color: #f472b6; font-weight: 700; }
-    .tok-operator { color: var(--orange); }
-    .sql .tok-keyword { color: #60a5fa; }
-
-    .tooltip { position: relative; color: var(--yellow); border-bottom: 1px dotted var(--yellow); cursor: help; }
-    .tooltip::after { content: attr(data-tip); position: absolute; z-index: 30; left: 50%; bottom: calc(100% + 9px); width: 230px; padding: 9px 11px; color: #e2e8f0; background: #020617; border: 1px solid #475569; border-radius: 7px; box-shadow: 0 8px 20px rgba(0,0,0,.35); font-size: .78rem; font-weight: 400; line-height: 1.4; opacity: 0; pointer-events: none; transform: translate(-50%, 5px); transition: opacity .15s, transform .15s; }
-    .tooltip:hover::after, .tooltip:focus::after { opacity: 1; transform: translate(-50%, 0); }
-    footer { margin-top: 50px; color: var(--muted); font-size: .85rem; }
-
-    @media (max-width: 760px) {
-      .app-shell { display: block; }
-      .sidebar { position: sticky; top: 0; z-index: 30; width: 100%; height: auto; padding: 12px 16px; border-right: 0; border-bottom: 1px solid var(--border); }
-      .brand { margin: 0 0 9px; }
-      .lesson-nav { display: flex; gap: 5px; overflow-x: auto; }
-      .lesson-nav a { white-space: nowrap; }
-      .progress { display: none; }
-      .topbar { top: 82px; }
-      .lesson-header { top: 135px; }
-    }
+    :root{--bg:#080d18;--sidebar:#0d1424;--panel:#111a2c;--panel2:#17233a;--text:#e5edf8;--muted:#91a4bd;--border:#263750;--amp:#c084fc;--sql:#38bdf8;--green:#86efac;--yellow:#fde047;--cyan:#67e8f9;--orange:#fb923c;--code:#070b14}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,sans-serif;line-height:1.65}
+    .app{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;overflow:auto;padding:24px 17px;background:var(--sidebar);border-right:1px solid var(--border)}
+    .brand{margin-bottom:22px;font-weight:800}.brand span{color:var(--sql)}.nav{display:grid;gap:5px}.nav a{padding:8px 10px;border-radius:7px;color:var(--muted);text-decoration:none;font-size:.88rem}.nav a:hover,.nav a.active{color:#fff;background:var(--panel2)}
+    .progress{margin-top:25px;padding:13px;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-size:.78rem}.bar{height:5px;margin-top:8px;background:#263750;border-radius:99px;overflow:hidden}.bar span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--amp),var(--sql));transition:width .3s}
+    .main{min-width:0}.topbar{position:sticky;top:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:11px clamp(20px,5vw,64px);background:rgba(8,13,24,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}.topbar small{color:var(--muted)}.topbar a{color:var(--sql);font-size:.84rem;text-decoration:none}
+    .content{max-width:1050px;margin:auto;padding:42px clamp(20px,5vw,64px) 90px}.eyebrow{display:inline-block;padding:4px 11px;border:1px solid #075985;border-radius:99px;background:#082f49;color:var(--sql);font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}h1,h2,h3{color:#f8fafc;line-height:1.25}h1{margin:14px 0;font-size:clamp(2rem,5vw,3.5rem)}h2{margin:0;font-size:1.4rem}h3{font-size:1.1rem}p,li{color:#cbd5e1}a{color:#7dd3fc}.intro{max-width:780px;color:var(--muted);font-size:1.04rem}
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:28px 0 14px}.search{flex:1;min-width:220px;padding:11px 13px;color:var(--text);background:var(--panel);border:1px solid var(--border);border-radius:8px;outline:0}.search:focus{border-color:var(--sql);box-shadow:0 0 0 3px #38bdf822}.tab{cursor:pointer;padding:9px 13px;color:var(--muted);background:var(--panel);border:1px solid var(--border);border-radius:8px;font-weight:700}.tab.active,.tab:hover{color:#fff;border-color:var(--sql);background:#0c3047}
+    .lesson{scroll-margin-top:70px;margin:38px 0;border:1px solid var(--border);border-radius:14px;background:rgba(17,26,44,.72);overflow:hidden;animation:rise .5s ease both}.lesson.hidden{display:none}.lesson-header{position:sticky;top:50px;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 20px;background:rgba(23,35,58,.96);border-bottom:1px solid var(--border);backdrop-filter:blur(10px)}.lesson-number{color:var(--amp);font:800 .74rem ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}.lesson-summary{color:var(--muted);font-size:.86rem}.lesson-body{padding:4px 20px 22px}details{border-top:1px solid #263750aa}details:first-child{border-top:0}summary{cursor:pointer;padding:17px 2px;color:#f8fafc;font-weight:700}summary:hover,details[open] summary{color:var(--sql)}.note{padding:11px 14px;background:#0c1627;border-left:3px solid var(--amp);border-radius:5px;color:#cbd5e1}
+    .code-card{margin:17px 0;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--code)}.code-card.ampscript{border-top:3px solid var(--amp)}.code-card.sql{border-top:3px solid var(--sql)}.code-toolbar{display:flex;justify-content:space-between;align-items:center;padding:8px 13px;background:#111827;border-bottom:1px solid var(--border)}.code-label{font:800 .72rem ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}.ampscript .code-label{color:var(--amp)}.sql .code-label{color:var(--sql)}.copy{cursor:pointer;padding:5px 10px;color:#e2e8f0;background:#1e293b;border:1px solid #475569;border-radius:5px;font-size:.76rem}.copy:hover{background:#334155}.scroll{overflow:auto}pre{margin:0;padding:15px 17px;min-width:max-content;color:#e2e8f0;font:.87rem/1.7 "SFMono-Regular",Consolas,monospace;counter-reset:line}.line{display:block;min-height:1.7em}.line:before{counter-increment:line;content:counter(line);display:inline-block;width:3ch;margin-right:2ch;color:#475569;text-align:right;user-select:none}.tok-keyword{color:var(--amp);font-weight:700}.tok-variable{color:var(--yellow)}.tok-string{color:var(--green)}.tok-function{color:var(--cyan)}.tok-delimiter{color:#f472b6;font-weight:700}.tok-operator{color:var(--orange)}.sql .tok-keyword{color:#60a5fa}
+    .tooltip{position:relative;color:var(--yellow);border-bottom:1px dotted var(--yellow);cursor:help}.tooltip:after{content:attr(data-tip);position:absolute;z-index:50;left:50%;bottom:calc(100% + 8px);width:230px;padding:9px 11px;color:#e2e8f0;background:#020617;border:1px solid #475569;border-radius:7px;box-shadow:0 8px 20px #0008;font-size:.77rem;font-weight:400;line-height:1.4;opacity:0;pointer-events:none;transform:translate(-50%,5px);transition:.15s}.tooltip:hover:after,.tooltip:focus:after{opacity:1;transform:translate(-50%,0)}
+    .lesson-actions{display:flex;justify-content:space-between;gap:10px;margin-top:22px}.next,.previous{padding:9px 13px;border-radius:7px;text-decoration:none;font-size:.84rem;font-weight:700}.next{color:#06111d;background:var(--sql)}.previous{color:#cbd5e1;background:var(--panel2);border:1px solid var(--border)}.next:hover,.previous:hover{filter:brightness(1.12)}.empty{display:none;padding:18px;color:var(--muted);border:1px dashed var(--border);border-radius:9px}.card{margin-top:40px;padding:20px;border:1px solid var(--border);border-radius:12px;background:var(--panel)}footer{margin-top:45px;color:var(--muted);font-size:.84rem}
+    @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+    @media(max-width:760px){.app{display:block}.sidebar{position:sticky;z-index:40;top:0;width:100%;height:auto;padding:11px 15px;border-right:0;border-bottom:1px solid var(--border)}.brand{margin:0 0 8px}.nav{display:flex;overflow:auto;gap:5px}.nav a{white-space:nowrap}.progress{display:none}.topbar{top:76px}.lesson-header{top:124px}.toolbar{position:sticky;top:112px;z-index:15;background:var(--bg);padding:8px 0}}
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand">MarkOps <span>Builder Guide</span></div>
-      <nav class="lesson-nav" aria-label="Lesson navigation">
-        <a href="#start">Start here</a>
-        <a href="#lesson-1">01 Variables</a>
-        <a href="#lesson-2">02 Data Extensions</a>
-        <a href="#lesson-3">03 Conditions</a>
-        <a href="#lesson-4">04 Loops</a>
-        <a href="#lesson-5">05 SQL basics</a>
-        <a href="#lesson-6">06 JOIN & UNION</a>
-      </nav>
-      <div class="progress" aria-live="polite">Lesson progress<div class="progress-bar"><span></span></div></div>
-    </aside>
+<div class="app">
+  <aside class="sidebar"><div class="brand">MarkOps <span>Builder Guide</span></div><nav class="nav" aria-label="Lesson navigation"><a href="#start">Start here</a><a href="#lesson-1">01 Variables</a><a href="#lesson-2">02 Data Extensions</a><a href="#lesson-3">03 Conditions</a><a href="#lesson-4">04 Loops</a><a href="#lesson-5">05 SQL</a><a href="#lesson-6">06 JOIN & UNION</a></nav><div class="progress">Lesson progress<div class="bar"><span></span></div></div></aside>
+  <div class="main"><header class="topbar"><small>SFMC • Interactive beginner reference</small><a href="https://github.com/kenxavierr/markops-builder-guide">View repository →</a></header>
+    <main class="content" id="start"><span class="eyebrow">SFMC • AMPscript • SQL</span><h1>Build better marketing operations, one lesson at a time.</h1><p class="intro">A practical guide for marketers and campaign builders. Use the search box, switch between AMPscript and SQL lessons, open collapsible topics, hover over highlighted terms, and copy examples directly into SFMC.</p>
+      <div class="toolbar"><input id="search" class="search" type="search" placeholder="Search lessons, terms, or topics…" aria-label="Search lessons"><button class="tab active" data-filter="all">All lessons</button><button class="tab" data-filter="ampscript">AMPscript</button><button class="tab" data-filter="sql">SQL</button></div><div id="empty" class="empty">No matching lessons found. Try “lookup”, “loop”, “join”, or “condition”.</div>
 
-    <div class="main">
-      <header class="topbar"><small>SFMC • Interactive beginner reference</small><a href="https://github.com/kenxavierr/markops-builder-guide">View repository →</a></header>
-      <main class="content" id="start">
-        <span class="eyebrow">SFMC • AMPscript • SQL</span>
-        <h1>Build better marketing operations, one lesson at a time.</h1>
-        <p class="intro">A practical, beginner-friendly guide for marketers and campaign builders. Open each lesson when you are ready, hover over highlighted terms for explanations, and use <strong>Copy code</strong> to take examples into SFMC.</p>
-
-        <section class="lesson" id="lesson-1">
-          <div class="lesson-header"><div><div class="lesson-number">Lesson 01</div><h2>Variables and values</h2></div><span class="lesson-summary">Store reusable data</span></div>
-          <div class="lesson-body">
-            <details open><summary>Initialize an AMPscript variable</summary>
-              <p>Variables store values you want to reuse. The <span class="tooltip" tabindex="0" data-tip="Declares one or more variables for the current AMPscript block.">var</span> statement declares them, and <span class="tooltip" tabindex="0" data-tip="Assigns a value to a variable.">set</span> gives them a value.</p>
-              <div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">%%[
+      <section class="lesson" id="lesson-1" data-type="ampscript" data-search="variables values var set ampscript"><div class="lesson-header"><div><div class="lesson-number">Lesson 01</div><h2>Variables and values</h2></div><span class="lesson-summary">Store reusable data</span></div><div class="lesson-body"><details open><summary>Initialize an AMPscript variable</summary><p>Variables store values for reuse. <span class="tooltip" tabindex="0" data-tip="Declares one or more variables for the current AMPscript block.">var</span> declares them and <span class="tooltip" tabindex="0" data-tip="Assigns a value to a variable.">set</span> gives them a value.</p><div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy">Copy code</button></div><div class="scroll"><pre class="source">%%[
   var @firstName, @city, @offerText
 
   set @firstName = "Sarah"
   set @city = "Singapore"
   set @offerText = "Free Shipping"
-]%%</pre></div></div>
-            </details>
-          </div>
-        </section>
+]%%</pre></div></div></details><div class="lesson-actions"><span></span><a class="next" href="#lesson-2">Next lesson →</a></div></div></section>
 
-        <section class="lesson" id="lesson-2">
-          <div class="lesson-header"><div><div class="lesson-number">Lesson 02</div><h2>Data Extension lookups</h2></div><span class="lesson-summary">Bring data into an email</span></div>
-          <div class="lesson-body">
-            <details open><summary>Read a value and reference it in the email</summary>
-              <p><span class="tooltip" tabindex="0" data-tip="Reads a value already available in the send context, such as SubscriberKey.">AttributeValue()</span> gets the subscriber key. <span class="tooltip" tabindex="0" data-tip="Returns one field value from a Data Extension matching a field and value.">Lookup()</span> retrieves the first name.</p>
-              <div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">%%[
+      <section class="lesson" id="lesson-2" data-type="ampscript" data-search="data extension de lookup attributevalue personalization email"><div class="lesson-header"><div><div class="lesson-number">Lesson 02</div><h2>Data Extension lookups</h2></div><span class="lesson-summary">Bring data into an email</span></div><div class="lesson-body"><details open><summary>Read a value and reference it in the email</summary><p><span class="tooltip" tabindex="0" data-tip="Reads a value already available in the send context, such as SubscriberKey.">AttributeValue()</span> gets the subscriber key. <span class="tooltip" tabindex="0" data-tip="Returns one field value from a Data Extension matching a field and value.">Lookup()</span> retrieves the first name.</p><div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy">Copy code</button></div><div class="scroll"><pre class="source">%%[
   var @SubscriberKey, @FirstName
 
   set @SubscriberKey = AttributeValue("SubscriberKey")
   set @FirstName = Lookup("ENT.CustomerMaster","FirstName","SubscriberKey",@SubscriberKey)
 ]%%
 
-Hi %%=v(@FirstName)=%%,</pre></div></div>
-            </details>
-          </div>
-        </section>
+Hi %%=v(@FirstName)=%%,</pre></div></div></details><div class="lesson-actions"><a class="previous" href="#lesson-1">← Previous</a><a class="next" href="#lesson-3">Next lesson →</a></div></div></section>
 
-        <section class="lesson" id="lesson-3">
-          <div class="lesson-header"><div><div class="lesson-number">Lesson 03</div><h2>Conditional content</h2></div><span class="lesson-summary">Show the right message</span></div>
-          <div class="lesson-body">
-            <details open><summary>Use IF, ELSEIF, and ELSE</summary>
-              <p>Conditional logic lets you show different content for different customer tiers, countries, or campaign audiences.</p>
-              <div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">%%[
+      <section class="lesson" id="lesson-3" data-type="ampscript" data-search="if elseif else condition conditional content tier"><div class="lesson-header"><div><div class="lesson-number">Lesson 03</div><h2>Conditional content</h2></div><span class="lesson-summary">Show the right message</span></div><div class="lesson-body"><details open><summary>Use IF, ELSEIF, and ELSE</summary><p>Conditional logic shows different content for customer tiers, countries, or audiences.</p><div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy">Copy code</button></div><div class="scroll"><pre class="source">%%[
   var @customerTier
   set @customerTier = "Silver"
 ]%%
@@ -216,21 +54,11 @@ Hi %%=v(@FirstName)=%%,</pre></div></div>
   Gold member pricing is active.
 %%[ elseif @customerTier == "Silver" then ]%%
   Silver member pricing is active.
-%%[ elseif @customerTier == "Bronze" then ]%%
-  Bronze member pricing is active.
 %%[ else ]%%
   Standard pricing applies.
-%%[ endif ]%%</pre></div></div>
-            </details>
-          </div>
-        </section>
+%%[ endif ]%%</pre></div></div></details><div class="lesson-actions"><a class="previous" href="#lesson-2">← Previous</a><a class="next" href="#lesson-4">Next lesson →</a></div></div></section>
 
-        <section class="lesson" id="lesson-4">
-          <div class="lesson-header"><div><div class="lesson-number">Lesson 04</div><h2>FOR loops</h2></div><span class="lesson-summary">Repeat content</span></div>
-          <div class="lesson-body">
-            <details open><summary>Repeat a simple content block</summary>
-              <p>Loops are useful when displaying several items, such as recommendations or products returned from a lookup.</p>
-              <div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">%%[
+      <section class="lesson" id="lesson-4" data-type="ampscript" data-search="for loop repeat content recommendations products"><div class="lesson-header"><div><div class="lesson-number">Lesson 04</div><h2>FOR loops</h2></div><span class="lesson-summary">Repeat content</span></div><div class="lesson-body"><details open><summary>Repeat a simple content block</summary><p>Loops are useful for displaying several products, recommendations, or rows returned from a lookup.</p><div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy">Copy code</button></div><div class="scroll"><pre class="source">%%[
   var @i
 
   for @i = 1 to 3 do
@@ -238,34 +66,18 @@ Hi %%=v(@FirstName)=%%,</pre></div></div>
   Item %%=v(@i)=%%&lt;br&gt;
 %%[
   next @i
-]%%</pre></div></div>
-            </details>
-          </div>
-        </section>
+]%%</pre></div></div></details><div class="lesson-actions"><a class="previous" href="#lesson-3">← Previous</a><a class="next" href="#lesson-5">Next lesson →</a></div></div></section>
 
-        <section class="lesson" id="lesson-5">
-          <div class="lesson-header"><div><div class="lesson-number">Lesson 05</div><h2>SQL foundations</h2></div><span class="lesson-summary">Select and filter audiences</span></div>
-          <div class="lesson-body">
-            <details open><summary>SELECT records from a Data Extension</summary>
-              <p><span class="tooltip" tabindex="0" data-tip="Chooses the columns returned by the query.">SELECT</span> chooses fields. <span class="tooltip" tabindex="0" data-tip="Identifies the source Data Extension or table.">FROM</span> identifies the source. <span class="tooltip" tabindex="0" data-tip="Filters rows before they are returned.">WHERE</span> narrows the audience.</p>
-              <div class="code-card sql"><div class="code-toolbar"><span class="code-label">SQL</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">SELECT
+      <section class="lesson" id="lesson-5" data-type="sql" data-search="sql select where filter audience data extension"><div class="lesson-header"><div><div class="lesson-number">Lesson 05</div><h2>SQL foundations</h2></div><span class="lesson-summary">Select and filter audiences</span></div><div class="lesson-body"><details open><summary>SELECT records from a Data Extension</summary><p><span class="tooltip" tabindex="0" data-tip="Chooses the columns returned by the query.">SELECT</span> chooses fields. <span class="tooltip" tabindex="0" data-tip="Identifies the source Data Extension.">FROM</span> identifies the source. <span class="tooltip" tabindex="0" data-tip="Filters rows before they are returned.">WHERE</span> narrows the audience.</p><div class="code-card sql"><div class="code-toolbar"><span class="code-label">SQL</span><button class="copy">Copy code</button></div><div class="scroll"><pre class="source">SELECT
   SubscriberKey,
   EmailAddress,
   FirstName,
   LastName
 FROM ent.CustomerMaster
 WHERE IsActive = 1
-ORDER BY FirstName ASC</pre></div></div>
-            </details>
-          </div>
-        </section>
+ORDER BY FirstName ASC</pre></div></div></details><div class="lesson-actions"><a class="previous" href="#lesson-4">← Previous</a><a class="next" href="#lesson-6">Next lesson →</a></div></div></section>
 
-        <section class="lesson" id="lesson-6">
-          <div class="lesson-header"><div><div class="lesson-number">Lesson 06</div><h2>JOIN and UNION</h2></div><span class="lesson-summary">Combine Data Extensions</span></div>
-          <div class="lesson-body">
-            <details open><summary>JOIN customer and order data</summary>
-              <p>A <span class="tooltip" tabindex="0" data-tip="Combines rows from two sources using matching fields.">JOIN</span> connects related records, such as a customer and their orders.</p>
-              <div class="code-card sql"><div class="code-toolbar"><span class="code-label">SQL • JOIN</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">SELECT
+      <section class="lesson" id="lesson-6" data-type="sql" data-search="sql join union combine data extensions regional"><div class="lesson-header"><div><div class="lesson-number">Lesson 06</div><h2>JOIN and UNION</h2></div><span class="lesson-summary">Combine Data Extensions</span></div><div class="lesson-body"><details open><summary>JOIN customer and order data</summary><p>A <span class="tooltip" tabindex="0" data-tip="Combines rows from two sources using matching fields.">JOIN</span> connects related records, such as customers and orders.</p><div class="code-card sql"><div class="code-toolbar"><span class="code-label">SQL • JOIN</span><button class="copy">Copy code</button></div><div class="scroll"><pre class="source">SELECT
   c.SubscriberKey,
   c.EmailAddress,
   c.FirstName,
@@ -273,11 +85,7 @@ ORDER BY FirstName ASC</pre></div></div>
   o.TotalAmount
 FROM ent.CustomerMaster c
 LEFT JOIN ent.CustomerOrders o
-  ON c.SubscriberKey = o.SubscriberKey</pre></div></div>
-            </details>
-            <details><summary>UNION regional audiences</summary>
-              <p><span class="tooltip" tabindex="0" data-tip="Stacks compatible result sets vertically. UNION removes duplicates; UNION ALL keeps them.">UNION ALL</span> combines rows from two queries. Both queries must return the same number and order of columns.</p>
-              <div class="code-card sql"><div class="code-toolbar"><span class="code-label">SQL • UNION ALL</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">SELECT
+  ON c.SubscriberKey = o.SubscriberKey</pre></div></div></details><details><summary>UNION regional audiences</summary><p><span class="tooltip" tabindex="0" data-tip="Stacks compatible result sets vertically. UNION removes duplicates; UNION ALL keeps them.">UNION ALL</span> combines rows from two queries. Both queries need the same number and order of columns.</p><div class="code-card sql"><div class="code-toolbar"><span class="code-label">SQL • UNION ALL</span><button class="copy">Copy code</button></div><div class="scroll"><pre class="source">SELECT
   SubscriberKey,
   EmailAddress,
   FirstName,
@@ -291,76 +99,22 @@ SELECT
   EmailAddress,
   FirstName,
   Country
-FROM ent.Customers_Malaysia</pre></div></div>
-            </details>
-          </div>
-        </section>
+FROM ent.Customers_Malaysia</pre></div></div></details><div class="lesson-actions"><a class="previous" href="#lesson-5">← Previous</a><a class="next" href="#start">Back to start ↑</a></div></div></section>
 
-        <div class="card"><h2>Next steps</h2><p>Practice one lesson at a time in a test Data Extension or email preview. Once the fundamentals are comfortable, explore the full guides in the repository.</p><ul><li><a href="../README.md">Main README</a></li><li><a href="../guide/marketers-guide.md">Marketers Guide</a></li><li><a href="../guide/query-builders-guide.md">Query Builders Guide</a></li><li><a href="../guide/email-marketers-guide.md">Email Marketers Guide</a></li><li><a href="../guide/copy-paste-kit.md">Copy-Paste Kit</a></li></ul></div>
-        <footer>Repository: <a href="https://github.com/kenxavierr/markops-builder-guide">github.com/kenxavierr/markops-builder-guide</a></footer>
-      </main>
-    </div>
+      <div class="card"><h2>Explore the full guides</h2><p>Continue learning with the complete repository documentation.</p><ul><li><a href="../README.md">Main README</a></li><li><a href="../guide/marketers-guide.md">Marketers Guide</a></li><li><a href="../guide/query-builders-guide.md">Query Builders Guide</a></li><li><a href="../guide/email-marketers-guide.md">Email Marketers Guide</a></li><li><a href="../guide/copy-paste-kit.md">Copy-Paste Kit</a></li></ul></div><footer>Repository: <a href="https://github.com/kenxavierr/markops-builder-guide">github.com/kenxavierr/markops-builder-guide</a></footer>
+    </main>
   </div>
-
-  <script>
-    const ampKeywords = /^(var|set|if|then|elseif|else|endif|for|to|do|next|and|or|not)$/i;
-    const sqlKeywords = /^(SELECT|FROM|WHERE|AND|OR|AS|LEFT|RIGHT|INNER|OUTER|JOIN|ON|UNION|ALL|ORDER|BY|ASC|DESC|TOP|IS|NOT|NULL|IN|LIKE)$/i;
-    const functions = /^(AttributeValue|Lookup|LookupRows|RowCount|Row|Field|v)$/i;
-
-    function escapeHtml(value) {
-      return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
-    function tokenize(source, type) {
-      const pattern = /(\/\*[\s\S]*?\*\/|--[^\n]*|%%\[|\]%%|%%=[\s\S]*?=%%|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|@[A-Za-z_][\w]*|\b[A-Za-z_][\w]*\b|==|!=|<=|>=|=|\+|-|\*|\/)/g;
-      let html = '', cursor = 0, match;
-      while ((match = pattern.exec(source)) !== null) {
-        html += escapeHtml(source.slice(cursor, match.index));
-        const token = match[0];
-        let className = '';
-        if (/^\/\*|^--/.test(token)) className = 'tok-comment';
-        else if (/^%%\[|^\]%%|^%%=/.test(token)) className = 'tok-delimiter';
-        else if (/^@/.test(token)) className = 'tok-variable';
-        else if (/^['"]/.test(token)) className = 'tok-string';
-        else if (functions.test(token)) className = 'tok-function';
-        else if ((type === 'sql' ? sqlKeywords : ampKeywords).test(token)) className = 'tok-keyword';
-        else if (/^(==|!=|<=|>=|=|\+|-|\*|\/)$/.test(token)) className = 'tok-operator';
-        html += className ? `<span class="${className}">${escapeHtml(token)}</span>` : escapeHtml(token);
-        cursor = match.index + token.length;
-      }
-      return html + escapeHtml(source.slice(cursor));
-    }
-
-    document.querySelectorAll('.code-card').forEach((card) => {
-      const pre = card.querySelector('.source-code');
-      const source = pre.textContent.replace(/\n$/, '');
-      const type = card.classList.contains('sql') ? 'sql' : 'ampscript';
-      pre.innerHTML = tokenize(source, type).split('\n').map(line => `<span class="code-line">${line || '&nbsp;'}</span>`).join('');
-      card.querySelector('.copy-button').addEventListener('click', async (event) => {
-        try {
-          await navigator.clipboard.writeText(source);
-          const button = event.currentTarget;
-          const original = button.textContent;
-          button.textContent = 'Copied!';
-          setTimeout(() => { button.textContent = original; }, 1400);
-        } catch (_) {
-          event.currentTarget.textContent = 'Copy unavailable';
-        }
-      });
-    });
-
-    const sections = [...document.querySelectorAll('.lesson')];
-    const navLinks = [...document.querySelectorAll('.lesson-nav a')];
-    const progress = document.querySelector('.progress-bar span');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`));
-          progress.style.width = `${((sections.indexOf(entry.target) + 1) / sections.length) * 100}%`;
-        }
-      });
-    }, { rootMargin: '-20% 0px -65% 0px' });
-    sections.forEach(section => observer.observe(section));
-  </script>
+</div>
+<script>
+  const amp=/^(var|set|if|then|elseif|else|endif|for|to|do|next|and|or|not)$/i, sql=/^(SELECT|FROM|WHERE|AND|OR|AS|LEFT|RIGHT|INNER|OUTER|JOIN|ON|UNION|ALL|ORDER|BY|ASC|DESC|TOP|IS|NOT|NULL|IN|LIKE)$/i, fn=/^(AttributeValue|Lookup|LookupRows|RowCount|Row|Field|v)$/i;
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  function colorize(s,type){let out='',i=0,m,rx=/(%%\[|\]%%|%%=[\s\S]*?=%%|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|@[A-Za-z_]\w*|\b[A-Za-z_]\w*\b|==|!=|<=|>=|=|\+|-|\*|\/)/g;while((m=rx.exec(s))){out+=esc(s.slice(i,m.index));let t=m[0],c=/^%%|^\]%%/.test(t)?'tok-delimiter':/^@/.test(t)?'tok-variable':/^['"]/.test(t)?'tok-string':fn.test(t)?'tok-function':(type==='sql'?sql:amp).test(t)?'tok-keyword':/^(==|!=|<=|>=|=|\+|-|\*|\/)$/.test(t)?'tok-operator':'';out+=c?`<span class="${c}">${esc(t)}</span>`:esc(t);i=m.index+t.length}return out+esc(s.slice(i))}
+  document.querySelectorAll('.source').forEach(pre=>{let source=pre.textContent.replace(/\n$/,''),type=pre.closest('.code-card').classList.contains('sql')?'sql':'amp';pre.innerHTML=colorize(source,type).split('\n').map(x=>`<span class="line">${x||'&nbsp;'}</span>`).join('')});
+  document.querySelectorAll('.copy').forEach(btn=>btn.addEventListener('click',async()=>{let source=btn.closest('.code-card').querySelector('.source').textContent;try{await navigator.clipboard.writeText(source);let old=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=old,1400)}catch(e){btn.textContent='Copy unavailable'}}));
+  const lessons=[...document.querySelectorAll('.lesson')],links=[...document.querySelectorAll('.nav a')],bar=document.querySelector('.bar span'),search=document.querySelector('#search'),empty=document.querySelector('#empty');let filter='all';
+  function apply(){let q=search.value.toLowerCase().trim(),shown=0;lessons.forEach((x,i)=>{let ok=(filter==='all'||x.dataset.type===filter)&&(!q||(`${x.dataset.search} ${x.textContent}`).toLowerCase().includes(q));x.classList.toggle('hidden',!ok);if(ok)shown++});empty.style.display=shown?'none':'block'}
+  search.addEventListener('input',apply);document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');filter=t.dataset.filter;apply()}));
+  const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.hash===`#${e.target.id}`));bar.style.width=`${(lessons.indexOf(e.target)+1)/lessons.length*100}%`}}),{rootMargin:'-20% 0px -65% 0px'});lessons.forEach(x=>observer.observe(x));
+</script>
 </body>
 </html>
