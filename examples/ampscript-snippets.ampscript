@@ -1,0 +1,51 @@
+%%[
+  /* Basic variable initialization */
+  var @firstName, @city, @favoriteOffer
+
+  set @firstName = "Sarah"
+  set @city = "Singapore"
+  set @favoriteOffer = "Free Shipping"
+]%%
+
+Hello %%=v(@firstName)=%%,
+
+We are serving customers in %%=v(@city)=%%.
+
+Your current offer: %%=v(@favoriteOffer)=%%
+
+%%[
+  /* Reading from a Data Extension */
+  var @SubscriberKey, @FirstName
+
+  set @SubscriberKey = AttributeValue("SubscriberKey")
+  set @FirstName = Lookup("ENT.CustomerMaster","FirstName","SubscriberKey",@SubscriberKey)
+]%%
+
+Hi %%=v(@FirstName)=%%,
+
+Welcome back!
+
+%%[
+  /* Basic IF / ELSEIF / ELSE */
+  var @customerTier
+  set @customerTier = "Silver"
+]%%
+
+%%[ if @customerTier == "Gold" then ]%%
+  Gold member pricing applies.
+%%[ elseif @customerTier == "Silver" then ]%%
+  Silver member pricing applies.
+%%[ else ]%%
+  Standard pricing applies.
+%%[ endif ]%%
+
+%%[
+  /* Basic FOR loop */
+  var @i
+
+  for @i = 1 to 3 do
+]%%
+  Item %%=v(@i)=%%<br>
+%%[
+  next @i
+]%%
