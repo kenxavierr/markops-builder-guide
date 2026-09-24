@@ -6,13 +6,19 @@
   <title>MarkOps Builder Guide</title>
   <style>
     :root {
-      --bg: #0b1120;
-      --panel: #111827;
-      --text: #e5e7eb;
-      --muted: #94a3b8;
-      --border: #334155;
-      --amp-accent: #a78bfa;
-      --sql-accent: #38bdf8;
+      --bg: #080d18;
+      --sidebar: #0d1424;
+      --panel: #111a2c;
+      --panel-strong: #17233a;
+      --text: #e5edf8;
+      --muted: #91a4bd;
+      --border: #263750;
+      --amp: #c084fc;
+      --sql: #38bdf8;
+      --green: #86efac;
+      --yellow: #fde047;
+      --cyan: #67e8f9;
+      --orange: #fb923c;
       --code: #070b14;
     }
 
@@ -20,116 +26,188 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(180deg, var(--bg) 0%, #111827 100%);
       color: var(--text);
-      line-height: 1.7;
+      background: var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
     }
 
-    .container { max-width: 1120px; margin: 0 auto; padding: 40px 20px 80px; }
-    h1, h2 { color: #f8fafc; line-height: 1.3; }
-    h1 { font-size: clamp(2rem, 5vw, 3.2rem); margin: 12px 0; }
-    h2 { font-size: 1.65rem; margin-top: 38px; }
-    p, li { color: #cbd5e1; }
-    a { color: #7dd3fc; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .tag { display: inline-block; color: #7dd3fc; background: #082f49; border: 1px solid #075985; border-radius: 999px; padding: 5px 12px; font-size: .8rem; font-weight: 700; }
-    .card { background: rgba(17,24,39,.9); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin: 20px 0; }
+    .app-shell { display: grid; grid-template-columns: 270px minmax(0, 1fr); min-height: 100vh; }
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 26px 18px;
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+    }
+    .brand { margin: 0 0 24px; font-weight: 800; font-size: 1.05rem; color: #f8fafc; }
+    .brand span { color: var(--sql); }
+    .lesson-nav { display: grid; gap: 6px; }
+    .lesson-nav a { color: var(--muted); padding: 9px 11px; border-radius: 7px; font-size: .9rem; text-decoration: none; }
+    .lesson-nav a:hover, .lesson-nav a.active { color: #fff; background: var(--panel-strong); }
+    .progress { margin-top: 28px; padding: 14px; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-size: .8rem; }
+    .progress-bar { height: 5px; margin-top: 9px; background: #263750; border-radius: 99px; overflow: hidden; }
+    .progress-bar span { display: block; width: 0; height: 100%; background: linear-gradient(90deg, var(--amp), var(--sql)); transition: width .2s ease; }
 
-    .code-card { margin: 22px 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--code); box-shadow: 0 10px 25px rgba(0,0,0,.18); }
-    .code-card.ampscript { border-top: 3px solid var(--amp-accent); }
-    .code-card.sql { border-top: 3px solid var(--sql-accent); }
-    .code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 14px; background: #111827; border-bottom: 1px solid var(--border); }
-    .code-label { font: 700 .76rem/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; }
-    .ampscript .code-label { color: var(--amp-accent); }
-    .sql .code-label { color: var(--sql-accent); }
-    .copy-button { cursor: pointer; border: 1px solid #475569; border-radius: 6px; padding: 5px 10px; color: #e2e8f0; background: #1e293b; font-size: .78rem; }
+    .main { min-width: 0; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 12px clamp(20px, 5vw, 64px);
+      background: rgba(8, 13, 24, .9);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+    .topbar small { color: var(--muted); }
+    .topbar a { color: var(--sql); text-decoration: none; font-size: .85rem; }
+    .content { max-width: 1000px; margin: 0 auto; padding: 42px clamp(20px, 5vw, 64px) 90px; }
+    .eyebrow { display: inline-block; color: var(--sql); background: #082f49; border: 1px solid #075985; border-radius: 99px; padding: 4px 11px; font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    h1, h2, h3 { color: #f8fafc; line-height: 1.25; }
+    h1 { margin: 13px 0; font-size: clamp(2rem, 5vw, 3.5rem); }
+    h2 { margin: 0; font-size: 1.45rem; }
+    h3 { margin-top: 28px; font-size: 1.12rem; }
+    p, li { color: #cbd5e1; }
+    a { color: #7dd3fc; }
+    .intro { max-width: 760px; color: var(--muted); font-size: 1.05rem; }
+    .lesson {
+      scroll-margin-top: 76px;
+      margin: 42px 0;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(17, 26, 44, .72);
+      overflow: hidden;
+    }
+    .lesson-header {
+      position: sticky;
+      top: 53px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 15px 20px;
+      background: rgba(23, 35, 58, .96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+    .lesson-number { color: var(--amp); font: 800 .76rem ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; }
+    .lesson-body { padding: 5px 20px 24px; }
+    .lesson-summary { color: var(--muted); font-size: .9rem; }
+    details { border-top: 1px solid rgba(38, 55, 80, .75); }
+    details:first-of-type { border-top: 0; }
+    summary { cursor: pointer; padding: 18px 2px; color: #f8fafc; font-weight: 700; list-style-position: inside; }
+    summary:hover { color: var(--sql); }
+    details[open] summary { color: var(--sql); }
+    .note { padding: 12px 15px; margin: 13px 0; color: #cbd5e1; background: #0c1627; border-left: 3px solid var(--amp); border-radius: 5px; }
+
+    .code-card { margin: 18px 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--code); }
+    .code-card.ampscript { border-top: 3px solid var(--amp); }
+    .code-card.sql { border-top: 3px solid var(--sql); }
+    .code-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 13px; background: #111827; border-bottom: 1px solid var(--border); }
+    .code-label { font: 800 .73rem ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; }
+    .ampscript .code-label { color: var(--amp); }
+    .sql .code-label { color: var(--sql); }
+    .copy-button { cursor: pointer; padding: 5px 10px; color: #e2e8f0; background: #1e293b; border: 1px solid #475569; border-radius: 5px; font-size: .77rem; }
     .copy-button:hover { background: #334155; }
     .code-scroll { overflow-x: auto; }
-    pre { margin: 0; padding: 16px 18px; min-width: max-content; color: #e2e8f0; font: .9rem/1.7 "SFMono-Regular", Consolas, "Liberation Mono", monospace; counter-reset: line; }
+    pre { margin: 0; padding: 15px 17px; min-width: max-content; color: #e2e8f0; font: .88rem/1.7 "SFMono-Regular", Consolas, monospace; counter-reset: line; }
     .code-line { display: block; min-height: 1.7em; }
     .code-line::before { counter-increment: line; content: counter(line); display: inline-block; width: 3ch; margin-right: 2ch; color: #475569; text-align: right; user-select: none; }
-
-    /* AMPscript syntax colors: purple keywords, yellow variables, green strings, blue functions. */
-    .tok-keyword { color: #c084fc; font-weight: 700; }
-    .tok-variable { color: #facc15; }
-    .tok-string { color: #86efac; }
-    .tok-function { color: #67e8f9; }
+    .tok-keyword { color: var(--amp); font-weight: 700; }
+    .tok-variable { color: var(--yellow); }
+    .tok-string { color: var(--green); }
+    .tok-function { color: var(--cyan); }
     .tok-comment { color: #64748b; font-style: italic; }
     .tok-delimiter { color: #f472b6; font-weight: 700; }
-    .tok-operator { color: #fb923c; }
-    /* SQL has a blue identity while retaining shared token colors. */
+    .tok-operator { color: var(--orange); }
     .sql .tok-keyword { color: #60a5fa; }
-    .sql .tok-function { color: #22d3ee; }
-    .sql .tok-comment { color: #64748b; }
 
-    ul, ol { padding-left: 24px; }
-    footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
+    .tooltip { position: relative; color: var(--yellow); border-bottom: 1px dotted var(--yellow); cursor: help; }
+    .tooltip::after { content: attr(data-tip); position: absolute; z-index: 30; left: 50%; bottom: calc(100% + 9px); width: 230px; padding: 9px 11px; color: #e2e8f0; background: #020617; border: 1px solid #475569; border-radius: 7px; box-shadow: 0 8px 20px rgba(0,0,0,.35); font-size: .78rem; font-weight: 400; line-height: 1.4; opacity: 0; pointer-events: none; transform: translate(-50%, 5px); transition: opacity .15s, transform .15s; }
+    .tooltip:hover::after, .tooltip:focus::after { opacity: 1; transform: translate(-50%, 0); }
+    footer { margin-top: 50px; color: var(--muted); font-size: .85rem; }
+
+    @media (max-width: 760px) {
+      .app-shell { display: block; }
+      .sidebar { position: sticky; top: 0; z-index: 30; width: 100%; height: auto; padding: 12px 16px; border-right: 0; border-bottom: 1px solid var(--border); }
+      .brand { margin: 0 0 9px; }
+      .lesson-nav { display: flex; gap: 5px; overflow-x: auto; }
+      .lesson-nav a { white-space: nowrap; }
+      .progress { display: none; }
+      .topbar { top: 82px; }
+      .lesson-header { top: 135px; }
+    }
   </style>
 </head>
 <body>
-  <main class="container">
-    <span class="tag">SFMC • AMPscript • SQL</span>
-    <h1>MarkOps Builder Guide</h1>
-    <div class="card">
-      <p>A beginner-friendly guide for marketers and campaign builders using Salesforce Marketing Cloud (SFMC), AMPscript, and SQL.</p>
-      <p>Use the examples as a practical starter kit for personalization, Data Extension lookups, segmentation, and campaign preparation.</p>
-    </div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">MarkOps <span>Builder Guide</span></div>
+      <nav class="lesson-nav" aria-label="Lesson navigation">
+        <a href="#start">Start here</a>
+        <a href="#lesson-1">01 Variables</a>
+        <a href="#lesson-2">02 Data Extensions</a>
+        <a href="#lesson-3">03 Conditions</a>
+        <a href="#lesson-4">04 Loops</a>
+        <a href="#lesson-5">05 SQL basics</a>
+        <a href="#lesson-6">06 JOIN & UNION</a>
+      </nav>
+      <div class="progress" aria-live="polite">Lesson progress<div class="progress-bar"><span></span></div></div>
+    </aside>
 
-    <h2>What you will learn</h2>
-    <ul>
-      <li>How to initialize and reuse AMPscript variables</li>
-      <li>How to pull values from a Data Extension</li>
-      <li>How to personalize email content</li>
-      <li>How to use IF / ELSEIF / ELSE logic and FOR loops</li>
-      <li>How to write basic SQL using SELECT, WHERE, JOIN, and UNION</li>
-    </ul>
+    <div class="main">
+      <header class="topbar"><small>SFMC • Interactive beginner reference</small><a href="https://github.com/kenxavierr/markops-builder-guide">View repository →</a></header>
+      <main class="content" id="start">
+        <span class="eyebrow">SFMC • AMPscript • SQL</span>
+        <h1>Build better marketing operations, one lesson at a time.</h1>
+        <p class="intro">A practical, beginner-friendly guide for marketers and campaign builders. Open each lesson when you are ready, hover over highlighted terms for explanations, and use <strong>Copy code</strong> to take examples into SFMC.</p>
 
-    <h2>1. Variable initialization</h2>
-    <div class="code-card ampscript">
-      <div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div>
-      <div class="code-scroll"><pre class="source-code">%%[
+        <section class="lesson" id="lesson-1">
+          <div class="lesson-header"><div><div class="lesson-number">Lesson 01</div><h2>Variables and values</h2></div><span class="lesson-summary">Store reusable data</span></div>
+          <div class="lesson-body">
+            <details open><summary>Initialize an AMPscript variable</summary>
+              <p>Variables store values you want to reuse. The <span class="tooltip" tabindex="0" data-tip="Declares one or more variables for the current AMPscript block.">var</span> statement declares them, and <span class="tooltip" tabindex="0" data-tip="Assigns a value to a variable.">set</span> gives them a value.</p>
+              <div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">%%[
   var @firstName, @city, @offerText
 
   set @firstName = "Sarah"
   set @city = "Singapore"
   set @offerText = "Free Shipping"
-]%%</pre></div>
-    </div>
+]%%</pre></div></div>
+            </details>
+          </div>
+        </section>
 
-    <h2>2. Reading values from a Data Extension</h2>
-    <div class="code-card ampscript">
-      <div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div>
-      <div class="code-scroll"><pre class="source-code">%%[
+        <section class="lesson" id="lesson-2">
+          <div class="lesson-header"><div><div class="lesson-number">Lesson 02</div><h2>Data Extension lookups</h2></div><span class="lesson-summary">Bring data into an email</span></div>
+          <div class="lesson-body">
+            <details open><summary>Read a value and reference it in the email</summary>
+              <p><span class="tooltip" tabindex="0" data-tip="Reads a value already available in the send context, such as SubscriberKey.">AttributeValue()</span> gets the subscriber key. <span class="tooltip" tabindex="0" data-tip="Returns one field value from a Data Extension matching a field and value.">Lookup()</span> retrieves the first name.</p>
+              <div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">%%[
   var @SubscriberKey, @FirstName
 
   set @SubscriberKey = AttributeValue("SubscriberKey")
   set @FirstName = Lookup("ENT.CustomerMaster","FirstName","SubscriberKey",@SubscriberKey)
 ]%%
 
-Hi %%=v(@FirstName)=%%,</pre></div>
-    </div>
+Hi %%=v(@FirstName)=%%,</pre></div></div>
+            </details>
+          </div>
+        </section>
 
-    <h2>3. Personalization in the email body</h2>
-    <div class="code-card ampscript">
-      <div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div>
-      <div class="code-scroll"><pre class="source-code">%%[
-  var @firstName, @lastName, @city
-
-  set @firstName = "Alicia"
-  set @lastName = "Tan"
-  set @city = "Kuala Lumpur"
-]%%
-
-Hi %%=v(@firstName)=%% %%=v(@lastName)=%%,
-
-We have a special offer for customers in %%=v(@city)=%%.</pre></div>
-    </div>
-
-    <h2>4. IF / ELSEIF / ELSE logic</h2>
-    <div class="code-card ampscript">
-      <div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div>
-      <div class="code-scroll"><pre class="source-code">%%[
+        <section class="lesson" id="lesson-3">
+          <div class="lesson-header"><div><div class="lesson-number">Lesson 03</div><h2>Conditional content</h2></div><span class="lesson-summary">Show the right message</span></div>
+          <div class="lesson-body">
+            <details open><summary>Use IF, ELSEIF, and ELSE</summary>
+              <p>Conditional logic lets you show different content for different customer tiers, countries, or campaign audiences.</p>
+              <div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">%%[
   var @customerTier
   set @customerTier = "Silver"
 ]%%
@@ -142,13 +220,17 @@ We have a special offer for customers in %%=v(@city)=%%.</pre></div>
   Bronze member pricing is active.
 %%[ else ]%%
   Standard pricing applies.
-%%[ endif ]%%</pre></div>
-    </div>
+%%[ endif ]%%</pre></div></div>
+            </details>
+          </div>
+        </section>
 
-    <h2>5. FOR loops</h2>
-    <div class="code-card ampscript">
-      <div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div>
-      <div class="code-scroll"><pre class="source-code">%%[
+        <section class="lesson" id="lesson-4">
+          <div class="lesson-header"><div><div class="lesson-number">Lesson 04</div><h2>FOR loops</h2></div><span class="lesson-summary">Repeat content</span></div>
+          <div class="lesson-body">
+            <details open><summary>Repeat a simple content block</summary>
+              <p>Loops are useful when displaying several items, such as recommendations or products returned from a lookup.</p>
+              <div class="code-card ampscript"><div class="code-toolbar"><span class="code-label">AMPscript</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">%%[
   var @i
 
   for @i = 1 to 3 do
@@ -156,26 +238,34 @@ We have a special offer for customers in %%=v(@city)=%%.</pre></div>
   Item %%=v(@i)=%%&lt;br&gt;
 %%[
   next @i
-]%%</pre></div>
-    </div>
+]%%</pre></div></div>
+            </details>
+          </div>
+        </section>
 
-    <h2>6. SQL SELECT and filtering</h2>
-    <div class="code-card sql">
-      <div class="code-toolbar"><span class="code-label">SQL</span><button class="copy-button" type="button">Copy code</button></div>
-      <div class="code-scroll"><pre class="source-code">SELECT
+        <section class="lesson" id="lesson-5">
+          <div class="lesson-header"><div><div class="lesson-number">Lesson 05</div><h2>SQL foundations</h2></div><span class="lesson-summary">Select and filter audiences</span></div>
+          <div class="lesson-body">
+            <details open><summary>SELECT records from a Data Extension</summary>
+              <p><span class="tooltip" tabindex="0" data-tip="Chooses the columns returned by the query.">SELECT</span> chooses fields. <span class="tooltip" tabindex="0" data-tip="Identifies the source Data Extension or table.">FROM</span> identifies the source. <span class="tooltip" tabindex="0" data-tip="Filters rows before they are returned.">WHERE</span> narrows the audience.</p>
+              <div class="code-card sql"><div class="code-toolbar"><span class="code-label">SQL</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">SELECT
   SubscriberKey,
   EmailAddress,
   FirstName,
   LastName
 FROM ent.CustomerMaster
 WHERE IsActive = 1
-ORDER BY FirstName ASC</pre></div>
-    </div>
+ORDER BY FirstName ASC</pre></div></div>
+            </details>
+          </div>
+        </section>
 
-    <h2>7. SQL JOIN</h2>
-    <div class="code-card sql">
-      <div class="code-toolbar"><span class="code-label">SQL</span><button class="copy-button" type="button">Copy code</button></div>
-      <div class="code-scroll"><pre class="source-code">SELECT
+        <section class="lesson" id="lesson-6">
+          <div class="lesson-header"><div><div class="lesson-number">Lesson 06</div><h2>JOIN and UNION</h2></div><span class="lesson-summary">Combine Data Extensions</span></div>
+          <div class="lesson-body">
+            <details open><summary>JOIN customer and order data</summary>
+              <p>A <span class="tooltip" tabindex="0" data-tip="Combines rows from two sources using matching fields.">JOIN</span> connects related records, such as a customer and their orders.</p>
+              <div class="code-card sql"><div class="code-toolbar"><span class="code-label">SQL • JOIN</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">SELECT
   c.SubscriberKey,
   c.EmailAddress,
   c.FirstName,
@@ -183,13 +273,11 @@ ORDER BY FirstName ASC</pre></div>
   o.TotalAmount
 FROM ent.CustomerMaster c
 LEFT JOIN ent.CustomerOrders o
-  ON c.SubscriberKey = o.SubscriberKey</pre></div>
-    </div>
-
-    <h2>8. SQL UNION</h2>
-    <div class="code-card sql">
-      <div class="code-toolbar"><span class="code-label">SQL</span><button class="copy-button" type="button">Copy code</button></div>
-      <div class="code-scroll"><pre class="source-code">SELECT
+  ON c.SubscriberKey = o.SubscriberKey</pre></div></div>
+            </details>
+            <details><summary>UNION regional audiences</summary>
+              <p><span class="tooltip" tabindex="0" data-tip="Stacks compatible result sets vertically. UNION removes duplicates; UNION ALL keeps them.">UNION ALL</span> combines rows from two queries. Both queries must return the same number and order of columns.</p>
+              <div class="code-card sql"><div class="code-toolbar"><span class="code-label">SQL • UNION ALL</span><button class="copy-button" type="button">Copy code</button></div><div class="code-scroll"><pre class="source-code">SELECT
   SubscriberKey,
   EmailAddress,
   FirstName,
@@ -203,30 +291,16 @@ SELECT
   EmailAddress,
   FirstName,
   Country
-FROM ent.Customers_Malaysia</pre></div>
+FROM ent.Customers_Malaysia</pre></div></div>
+            </details>
+          </div>
+        </section>
+
+        <div class="card"><h2>Next steps</h2><p>Practice one lesson at a time in a test Data Extension or email preview. Once the fundamentals are comfortable, explore the full guides in the repository.</p><ul><li><a href="../README.md">Main README</a></li><li><a href="../guide/marketers-guide.md">Marketers Guide</a></li><li><a href="../guide/query-builders-guide.md">Query Builders Guide</a></li><li><a href="../guide/email-marketers-guide.md">Email Marketers Guide</a></li><li><a href="../guide/copy-paste-kit.md">Copy-Paste Kit</a></li></ul></div>
+        <footer>Repository: <a href="https://github.com/kenxavierr/markops-builder-guide">github.com/kenxavierr/markops-builder-guide</a></footer>
+      </main>
     </div>
-
-    <h2>Best practices</h2>
-    <ul>
-      <li>Use clear variable names and exact Data Extension field names.</li>
-      <li>Test AMPscript in preview before sending.</li>
-      <li>Filter early in SQL to reduce the audience and query workload.</li>
-      <li>Use UNION ALL when duplicate rows are acceptable.</li>
-    </ul>
-
-    <h2>Additional docs</h2>
-    <ul>
-      <li><a href="../README.md">Main README</a></li>
-      <li><a href="../guide/marketers-guide.md">Marketers Guide</a></li>
-      <li><a href="../guide/query-builders-guide.md">Query Builders Guide</a></li>
-      <li><a href="../guide/email-marketers-guide.md">Email Marketers Guide</a></li>
-      <li><a href="../guide/copy-paste-kit.md">Copy-Paste Kit</a></li>
-    </ul>
-
-    <footer>
-      Repository: <a href="https://github.com/kenxavierr/markops-builder-guide">github.com/kenxavierr/markops-builder-guide</a>
-    </footer>
-  </main>
+  </div>
 
   <script>
     const ampKeywords = /^(var|set|if|then|elseif|else|endif|for|to|do|next|and|or|not)$/i;
@@ -238,17 +312,14 @@ FROM ent.Customers_Malaysia</pre></div>
     }
 
     function tokenize(source, type) {
-      const tokenPattern = /(\/\*[\s\S]*?\*\/|--[^\n]*|%%\[|\]%%|%%=[\s\S]*?=%%|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|@[A-Za-z_][\w]*|\b[A-Za-z_][\w]*\b|==|!=|<=|>=|=|\+|-|\*|\/)/g;
-      let html = '';
-      let cursor = 0;
-      let match;
-      while ((match = tokenPattern.exec(source)) !== null) {
+      const pattern = /(\/\*[\s\S]*?\*\/|--[^\n]*|%%\[|\]%%|%%=[\s\S]*?=%%|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|@[A-Za-z_][\w]*|\b[A-Za-z_][\w]*\b|==|!=|<=|>=|=|\+|-|\*|\/)/g;
+      let html = '', cursor = 0, match;
+      while ((match = pattern.exec(source)) !== null) {
         html += escapeHtml(source.slice(cursor, match.index));
         const token = match[0];
         let className = '';
         if (/^\/\*|^--/.test(token)) className = 'tok-comment';
         else if (/^%%\[|^\]%%|^%%=/.test(token)) className = 'tok-delimiter';
-        else if (/^%%=/.test(token)) className = 'tok-delimiter';
         else if (/^@/.test(token)) className = 'tok-variable';
         else if (/^['"]/.test(token)) className = 'tok-string';
         else if (functions.test(token)) className = 'tok-function';
@@ -265,15 +336,31 @@ FROM ent.Customers_Malaysia</pre></div>
       const source = pre.textContent.replace(/\n$/, '');
       const type = card.classList.contains('sql') ? 'sql' : 'ampscript';
       pre.innerHTML = tokenize(source, type).split('\n').map(line => `<span class="code-line">${line || '&nbsp;'}</span>`).join('');
-
       card.querySelector('.copy-button').addEventListener('click', async (event) => {
-        await navigator.clipboard.writeText(source);
-        const button = event.currentTarget;
-        const original = button.textContent;
-        button.textContent = 'Copied!';
-        setTimeout(() => { button.textContent = original; }, 1400);
+        try {
+          await navigator.clipboard.writeText(source);
+          const button = event.currentTarget;
+          const original = button.textContent;
+          button.textContent = 'Copied!';
+          setTimeout(() => { button.textContent = original; }, 1400);
+        } catch (_) {
+          event.currentTarget.textContent = 'Copy unavailable';
+        }
       });
     });
+
+    const sections = [...document.querySelectorAll('.lesson')];
+    const navLinks = [...document.querySelectorAll('.lesson-nav a')];
+    const progress = document.querySelector('.progress-bar span');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`));
+          progress.style.width = `${((sections.indexOf(entry.target) + 1) / sections.length) * 100}%`;
+        }
+      });
+    }, { rootMargin: '-20% 0px -65% 0px' });
+    sections.forEach(section => observer.observe(section));
   </script>
 </body>
 </html>
