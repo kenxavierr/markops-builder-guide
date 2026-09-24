@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarkOps Builder Guide</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-soft: #1f2937;
+      --text: #e5e7eb;
+      --muted: #cbd5e1;
+      --accent: #38bdf8;
+      --accent-2: #34d399;
+      --border: #334155;
+      --code: #0b1120;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    h1, h2, h3 {
+      color: #f8fafc;
+      margin-top: 32px;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    h1 { font-size: 2.4rem; }
+    h2 { font-size: 1.7rem; }
+    h3 { font-size: 1.2rem; }
+
+    p, li {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .card {
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin: 18px 0;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+    }
+
+    pre {
+      background: var(--code);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow-x: auto;
+      padding: 18px;
+      margin-top: 16px;
+      margin-bottom: 18px;
+    }
+
+    code {
+      font-family: "Consolas", "Courier New", monospace;
+      font-size: 0.92rem;
+      color: #dbeafe;
+    }
+
+    ul, ol {
+      padding-left: 22px;
+    }
+
+    .tag {
+      display: inline-block;
+      margin-bottom: 8px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <span class="tag">SFMC • AMPscript • SQL</span>
+    <h1>MarkOps Builder Guide</h1>
+
+    <div class="card">
+      <p>A beginner-friendly guide for marketers and campaign builders using Salesforce Marketing Cloud (SFMC), AMPscript, and SQL.</p>
+      <p>This repository is designed as a practical starter kit for teams that want strong personalization, clean query logic, and easy-to-copy examples.</p>
+    </div>
+
+    <h2>What you will learn</h2>
+    <ul>
+      <li>How to initialize and reuse variables in AMPscript</li>
+      <li>How to pull values from a Data Extension</li>
+      <li>How to personalize email content with Data Extension values</li>
+      <li>How to use IF / ELSEIF / ELSE logic</li>
+      <li>How to build basic FOR loops</li>
+      <li>How to write simple SQL for queries and segmentation</li>
+      <li>How to combine data using JOIN and UNION</li>
+      <li>How to build a clean beginner workflow for campaign work</li>
+    </ul>
+
+    <h2>1. Variable initialization</h2>
+    <pre><code>%%[
+  var @firstName, @city, @offerText
+
+  set @firstName = "Sarah"
+  set @city = "Singapore"
+  set @offerText = "Free Shipping"
+]%%
+</code></pre>
+
+    <h2>2. Reading values from a Data Extension</h2>
+    <pre><code>%%[
+  var @SubscriberKey, @FirstName
+
+  set @SubscriberKey = AttributeValue("SubscriberKey")
+  set @FirstName = Lookup("ENT.CustomerMaster","FirstName","SubscriberKey",@SubscriberKey)
+]%%
+
+Hi %%=v(@FirstName)=%%,
+</code></pre>
+
+    <h2>3. Personalization in email body</h2>
+    <pre><code>%%[
+  var @firstName, @lastName, @city
+
+  set @firstName = "Alicia"
+  set @lastName = "Tan"
+  set @city = "Kuala Lumpur"
+]%%
+
+Hi %%=v(@firstName)=%% %%=v(@lastName)=%%,
+
+We have a special offer for customers in %%=v(@city)=%%.
+</code></pre>
+
+    <h2>4. IF / ELSEIF / ELSE logic</h2>
+    <pre><code>%%[
+  var @customerTier
+  set @customerTier = "Silver"
+]%%
+
+%%[ if @customerTier == "Gold" then ]%%
+  Gold member pricing is active.
+%%[ elseif @customerTier == "Silver" then ]%%
+  Silver member pricing is active.
+%%[ elseif @customerTier == "Bronze" then ]%%
+  Bronze member pricing is active.
+%%[ else ]%%
+  Standard pricing applies.
+%%[ endif ]%%
+</code></pre>
+
+    <h2>5. FOR loops</h2>
+    <pre><code>%%[
+  var @i
+
+  for @i = 1 to 3 do
+]%%
+  Item %%=v(@i)=%%<br>
+%%[
+  next @i
+]%%
+</code></pre>
+
+    <h2>6. SQL select example</h2>
+    <pre><code>SELECT
+  SubscriberKey,
+  EmailAddress,
+  FirstName,
+  LastName
+FROM ent.CustomerMaster
+WHERE IsActive = 1
+ORDER BY FirstName ASC
+</code></pre>
+
+    <h2>7. SQL JOIN example</h2>
+    <pre><code>SELECT
+  c.SubscriberKey,
+  c.EmailAddress,
+  c.FirstName,
+  o.OrderID,
+  o.TotalAmount
+FROM ent.CustomerMaster c
+LEFT JOIN ent.CustomerOrders o
+  ON c.SubscriberKey = o.SubscriberKey
+</code></pre>
+
+    <h2>8. SQL UNION example</h2>
+    <pre><code>SELECT
+  SubscriberKey,
+  EmailAddress,
+  FirstName,
+  Country
+FROM ent.Customers_Singapore
+
+UNION ALL
+
+SELECT
+  SubscriberKey,
+  EmailAddress,
+  FirstName,
+  Country
+FROM ent.Customers_Malaysia
+</code></pre>
+
+    <h2>Best practices</h2>
+    <ul>
+      <li>Use clear variable names</li>
+      <li>Test AMPscript in preview before send</li>
+      <li>Check exact Data Extension field names</li>
+      <li>Filter early in SQL</li>
+      <li>Use UNION ALL when duplicates are acceptable</li>
+    </ul>
+
+    <h2>Additional docs</h2>
+    <ul>
+      <li><a href="../README.md">Main README</a></li>
+      <li><a href="../guide/marketers-guide.md">Marketers Guide</a></li>
+      <li><a href="../guide/query-builders-guide.md">Query Builders Guide</a></li>
+      <li><a href="../guide/email-marketers-guide.md">Email Marketers Guide</a></li>
+      <li><a href="../guide/copy-paste-kit.md">Copy-Paste Kit</a></li>
+    </ul>
+
+    <p><strong>Repository:</strong> <a href="https://github.com/kenxavierr/markops-builder-guide">https://github.com/kenxavierr/markops-builder-guide</a></p>
+    <p><strong>Preview:</strong> <a href="https://kenxavierr.github.io/markops-builder-guide/">https://kenxavierr.github.io/markops-builder-guide/</a></p>
+  </div>
+</body>
+</html>
