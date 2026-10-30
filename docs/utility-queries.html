@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Utility Queries | MarkOps Builder Guide</title>
+  <style>
+    :root {
+      --bg: #050810;
+      --panel: #0d1627;
+      --panel-2: #132039;
+      --text: #edf5ff;
+      --muted: #91a4bd;
+      --border: #20324d;
+      --sql: #38bdf8;
+      --green: #86efac;
+      --yellow: #fde047;
+      --purple: #c084fc;
+      --code-bg: #03060d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: radial-gradient(circle at 80% 0%, rgba(113, 179, 255, 0.18), transparent 28%), #050810;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 0 26px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: 0.02em;
+    }
+    .brand b { color: var(--purple); }
+    .nav {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .nav:hover { color: var(--text); }
+    .card {
+      background: rgba(13, 22, 39, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 22px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+      margin-bottom: 28px;
+    }
+    h1, h2, h3 { margin-top: 0; }
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 12px;
+    }
+    p { color: var(--muted); }
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--sql);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    .query {
+      margin-top: 20px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--code-bg);
+    }
+    .query .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(16, 28, 42, 0.9);
+      border-bottom: 1px solid var(--border);
+      color: var(--sql);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    pre {
+      margin: 0;
+      padding: 18px 16px 20px;
+      color: #dbeafe;
+      overflow-x: auto;
+      font-size: 0.92rem;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, sans-serif; }
+    .footer {
+      margin-top: 30px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      color: var(--muted);
+    }
+    a { color: #7dd3fc; }
+    @media (max-width: 768px) {
+      .topbar { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">MarkOps <b>Builder Guide</b></div>
+      <a class="nav" href="/markops-builder-guide/">← Back to guide</a>
+    </div>
+
+    <div class="card">
+      <div class="badge">Utility</div>
+      <h1>Utility Queries</h1>
+      <p>Quick SQL utilities for status checks, volume review, and deduplication before creating an audience or a target DE.</p>
+
+      <div class="query">
+        <div class="header">Query 1 · Status count check</div>
+        <pre><code>SELECT
+  a.Status,
+  COUNT(*) AS Cnt
+FROM DEName a
+WHERE a.Status IN ('Active', 'Cancelled')
+GROUP BY a.Status</code></pre>
+      </div>
+
+      <div class="query">
+        <div class="header">Query 2 · Campaign-level status volume</div>
+        <pre><code>SELECT
+  a.CampaignCode__c,
+  a.Status,
+  COUNT(*) AS Cnt
+FROM ent.Salesforce_Sample a
+WHERE a.CampaignCode__c = '000000123'
+  AND a.Status IN ('Active', 'Cancelled')
+GROUP BY
+  a.CampaignCode__c,
+  a.Status</code></pre>
+      </div>
+
+      <div class="query">
+        <div class="header">Query 3 · Total record volume by status</div>
+        <pre><code>SELECT
+  a.Status,
+  COUNT(*) AS TotalVolume
+FROM ent.Salesforce_Sample a
+GROUP BY a.Status
+ORDER BY TotalVolume DESC</code></pre>
+      </div>
+
+      <div class="query">
+        <div class="header">Query 4 · Volume by campaign code</div>
+        <pre><code>SELECT
+  a.CampaignCode__c,
+  COUNT(*) AS TotalRecords
+FROM ent.Salesforce_Sample a
+GROUP BY a.CampaignCode__c
+ORDER BY TotalRecords DESC</code></pre>
+      </div>
+
+      <div class="query">
+        <div class="header">Query 5 · Deduplicate records and keep the latest row</div>
+        <pre><code>SELECT
+  SubscriberKey,
+  EmailAddress,
+  FirstName,
+  Country
+FROM (
+  SELECT
+    SubscriberKey,
+    EmailAddress,
+    FirstName,
+    Country,
+    ROW_NUMBER() OVER (
+      PARTITION BY SubscriberKey
+      ORDER BY CreatedDate DESC
+    ) AS rn
+  FROM ent.CustomerMaster
+) x
+WHERE x.rn = 1</code></pre>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Tip: use these checks before writing a final audience query or a data extension population step.</p>
+    </div>
+  </div>
+</body>
+</html>
