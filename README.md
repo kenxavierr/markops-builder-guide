@@ -28,6 +28,7 @@ This repository is designed as a practical starter kit for:
 - [Common beginner workflows](#common-beginner-workflows)
 - [Copy-paste snippets](#copy-paste-snippets)
 - [Additional guides](#additional-guides)
+  - [Utility queries](https://kenxavierr.github.io/markops-builder-guide/utility-queries.html)
 
 ## Overview
 
@@ -328,6 +329,7 @@ This repo includes multiple beginner-focused guides:
 - `guide/query-builders-guide.md` — SQL-first view for segmentation and data preparation
 - `guide/email-marketers-guide.md` — email-focused AMPscript examples
 - `guide/copy-paste-kit.md` — quick snippets for campaigns and testing
+- [Utility queries](https://kenxavierr.github.io/markops-builder-guide/utility-queries.html) — status checks, volume analysis, and deduplication queries
 
 These guides are intentionally simple and written for people who want practical, copy-ready examples rather than deep technical theory.
 
