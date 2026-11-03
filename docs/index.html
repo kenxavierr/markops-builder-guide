@@ -1,355 +1,1000 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MarkOps Builder Guide</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MarkOps Builder Guide | SFMC Course</title>
   <style>
-    :root {
-      --bg: #050810;
-      --bg-2: #0b1220;
-      --panel: #0d1627;
-      --panel-2: #132039;
-      --text: #edf5ff;
-      --muted: #a7bbd6;
-      --border: #24354e;
-      --amp: #c084fc;
-      --sql: #38bdf8;
-      --green: #86efac;
-      --yellow: #fde047;
-      --code: #03060d;
-      --link: #7dd3fc;
+    :root{
+      --bg:#050810;
+      --side:#090f1d;
+      --panel:#0d1627;
+      --raised:#132039;
+      --text:#edf5ff;
+      --muted:#91a4bd;
+      --border:#20324d;
+      --amp:#c084fc;
+      --sql:#38bdf8;
+      --green:#86efac;
+      --yellow:#fde047;
+      --code:#03060d;
+      --gold:#ffbf69;
+      --danger:#fb7185;
+      --shadow: rgba(0,0,0,0.28);
     }
 
-    * { box-sizing: border-box; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      margin: 0;
-      font-family: Inter, "Segoe UI", sans-serif;
-      background: linear-gradient(180deg, #050810 0%, #0a1220 100%);
-      color: var(--text);
-      line-height: 1.6;
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background: radial-gradient(circle at 80% 0%, rgba(16,85,160,0.25), transparent 28%), var(--bg);
+      color:var(--text);
+      font: 15px/1.6 Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+      min-height:100vh;
     }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 280px minmax(0, 1fr);
-      min-height: 100vh;
+    a{color:inherit;text-decoration:none}
+    .shell{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      min-height:100vh;
     }
-
-    .sidebar {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      padding: 28px 20px 20px;
-      background: rgba(9, 15, 29, 0.96);
-      border-right: 1px solid var(--border);
+    .side{
+      position:sticky;
+      top:0;
+      height:100vh;
+      background:linear-gradient(180deg, var(--side), #0a1327);
+      border-right:1px solid var(--border);
+      padding:22px 18px 26px;
+      overflow:auto;
     }
-
-    .brand {
-      font-size: 1.7rem;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      margin-bottom: 10px;
+    .brand{
+      font-weight:900;
+      font-size:1.7rem;
+      letter-spacing:-0.06em;
+      margin-bottom:8px;
+      line-height:1.1;
     }
-
-    .brand span {
-      color: var(--amp);
+    .brand b{color:var(--amp)}
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border:1px solid rgba(56,189,248,0.4);
+      border-radius:999px;
+      background:rgba(56,189,248,0.08);
+      color:var(--sql);
+      font-size:.7rem;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      font-weight:700;
+      margin-bottom:20px;
     }
-
-    .badge {
-      display: inline-block;
-      margin-bottom: 24px;
-      padding: 5px 10px;
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      border-radius: 999px;
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--sql);
-      background: rgba(56, 189, 248, 0.1);
+    .group{
+      margin:18px 0 12px;
     }
-
-    .nav-group {
-      margin-bottom: 18px;
+    .group h3{
+      margin:0 0 10px;
+      font-size:.76rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:700;
     }
-
-    .nav-group h3 {
-      margin: 0 0 10px;
-      font-size: 0.9rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .nav{
+      display:grid;
+      gap:5px;
     }
-
-    .nav-group a {
-      display: block;
-      padding: 7px 10px;
-      border-radius: 8px;
-      color: var(--text);
-      text-decoration: none;
-      margin-bottom: 4px;
-      transition: 0.18s ease;
+    .nav a{
+      display:block;
+      padding:8px 10px;
+      border-radius:8px;
+      color:var(--text);
+      opacity:.9;
+      transition:.2s ease;
     }
-
-    .nav-group a:hover {
-      background: rgba(19, 32, 57, 0.9);
-      color: var(--link);
+    .nav a:hover{
+      background:rgba(255,255,255,0.03);
+      color:var(--sql);
+      transform:translateX(2px);
     }
-
-    .main {
-      padding: 32px 28px 64px;
+    .main{
+      padding:20px 26px 42px;
     }
-
-    .content {
-      max-width: 980px;
-      margin: 0 auto;
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      padding:12px 16px 18px;
+      border-bottom:1px solid var(--border);
+      margin-bottom:22px;
+      background: rgba(255,255,255,0.01);
+      border-radius:12px;
     }
-
-    .hero {
-      background: rgba(13, 22, 39, 0.9);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 28px 26px 20px;
-      margin-bottom: 28px;
+    .top .title{
+      color:var(--muted);
+      font-weight:700;
+      font-size:0.92rem;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
     }
-
-    .hero h1 {
-      margin: 0 0 12px;
-      font-size: clamp(2.2rem, 4vw, 3.5rem);
-      line-height: 1.1;
-      letter-spacing: -0.05em;
+    .repo{
+      color:var(--sql);
+      font-weight:700;
+      font-size:0.9rem;
     }
-
-    .hero p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 1.04rem;
+    .content{
+      max-width:1000px;
+      margin:0 auto;
     }
-
-    section {
-      scroll-margin-top: 28px;
-      margin-bottom: 26px;
-      background: rgba(13, 22, 39, 0.85);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 22px 20px;
+    .hero{
+      background:linear-gradient(180deg, rgba(19,32,57,.8), rgba(13,22,39,.9));
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:24px 22px 20px;
+      box-shadow:0 10px 32px var(--shadow);
+      margin-bottom:18px;
     }
-
-    section h2 {
-      margin: 0 0 16px;
-      font-size: 1.8rem;
-      letter-spacing: -0.04em;
+    .eyebrow{
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--sql);
+      font-weight:700;
     }
-
-    section p,
-    section li {
-      color: var(--muted);
+    h1{
+      margin:10px 0 12px;
+      font-size:clamp(2.2rem, 4vw, 3.4rem);
+      line-height:1.1;
+      letter-spacing:-.06em;
     }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-      margin-top: 12px;
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      font-size:1.04rem;
+      max-width:60ch;
     }
-
-    .chip {
-      padding: 14px 16px;
-      border-radius: 10px;
-      background: rgba(19, 32, 57, 0.8);
-      border: 1px solid var(--border);
+    .stats{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:20px;
     }
-
-    .chip strong {
-      display: inline-block;
-      margin-bottom: 6px;
-      color: var(--text);
+    .stat{
+      padding:10px 14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.02);
+      border-radius:10px;
+      min-width:120px;
+      font-weight:700;
+      color:var(--muted);
     }
-
-    .code-box {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      background: var(--code);
-      margin-top: 14px;
+    .stat b{
+      display:block;
+      font-size:1.4rem;
+      color:var(--text);
+      margin-bottom:2px;
     }
-
-    .code-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(18, 28, 42, 0.9);
-      color: var(--sql);
-      font-weight: 700;
-      font-size: 0.84rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+    .tools{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      padding:14px 0 2px;
+      margin-top:12px;
     }
-
-    pre {
-      margin: 0;
-      padding: 18px 16px;
-      overflow-x: auto;
-      font-size: 0.92rem;
-      line-height: 1.65;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: #dfeaf6;
+    .tab{
+      border:1px solid var(--border);
+      background:transparent;
+      color:var(--muted);
+      padding:7px 12px;
+      border-radius:999px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s ease;
     }
-
-    code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    .tab.active, .tab:hover{
+      background:rgba(56,189,248,0.12);
+      color:var(--text);
+      border-color:rgba(56,189,248,0.5);
     }
-
-    .utility-grid {
-      display: grid;
-      gap: 18px;
+    .lesson{
+      background:linear-gradient(180deg, rgba(13,22,39,.92), rgba(12,18,31,.96));
+      border:1px solid var(--border);
+      border-radius:16px;
+      overflow:hidden;
+      margin:20px 0;
+      box-shadow:0 10px 26px rgba(0,0,0,0.18);
     }
-
-    .utility-item {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(7, 13, 22, 0.8);
-      overflow: hidden;
+    .lesson.hidden{display:none}
+    .head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:14px 18px 12px;
+      gap:12px;
+      background:rgba(18, 28, 42, 0.95);
+      border-bottom:1px solid var(--border);
+      position:sticky;
+      top:0;
+      z-index:2;
     }
-
-    .utility-item .header {
-      background: rgba(19, 32, 57, 0.9);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 14px;
-      font-weight: 700;
-      color: var(--sql);
+    .crumb{
+      color:var(--muted);
+      font-size:.8rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-weight:700;
     }
-
-    a {
-      color: var(--link);
+    .num{
+      color:var(--amp);
+      font-weight:900;
+      font-size:0.82rem;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
     }
-
-    @media (max-width: 900px) {
-      .layout {
-        grid-template-columns: 1fr;
+    .lesson h2{
+      margin:0;
+      font-size:1.15rem;
+      letter-spacing:-0.04em;
+    }
+    .body{
+      padding:18px 18px 10px;
+    }
+    .marker{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+      color:var(--muted);
+      font-weight:600;
+      font-size:0.92rem;
+      padding:8px 0;
+    }
+    .marker i{
+      display:inline-block;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:var(--sql);
+      box-shadow:0 0 0 3px rgba(56,189,248,0.18);
+    }
+    details{
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(255,255,255,0.02);
+      overflow:hidden;
+    }
+    details summary{
+      list-style:none;
+      cursor:pointer;
+      padding:14px 16px;
+      color:var(--text);
+      font-weight:700;
+    }
+    details summary::-webkit-details-marker{display:none}
+    .summary{
+      color:var(--muted);
+      padding:0 16px 14px;
+      font-size:0.96rem;
+    }
+    .code{
+      border:1px solid var(--border);
+      border-radius:12px;
+      overflow:hidden;
+      background:var(--code);
+      margin-top:12px;
+    }
+    .codebar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      background:rgba(12,20,33,.95);
+      border-bottom:1px solid var(--border);
+      padding:8px 12px;
+      color:var(--sql);
+      font-size:.76rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-weight:800;
+    }
+    .copy{
+      background:rgba(23,34,54,.8);
+      border:1px solid var(--border);
+      color:var(--text);
+      padding:4px 8px;
+      border-radius:6px;
+      font-size:.75rem;
+      cursor:pointer;
+    }
+    pre.src{
+      margin:0;
+      padding:16px 18px 18px;
+      white-space:pre-wrap;
+      word-break:break-word;
+      color:#dfeaf6;
+      font: 0.92rem/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .checkpoints{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      margin-top:12px;
+      padding-top:8px;
+      border-top:1px solid rgba(255,255,255,0.05);
+      color:var(--muted);
+    }
+    .checkpoint{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:600;
+    }
+    .checkpoint input{
+      accent-color:var(--sql);
+      width:16px;
+      height:16px;
+    }
+    .actions{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:10px;
+      font-size:.9rem;
+      color:var(--muted);
+    }
+    .actions a{
+      color:var(--sql);
+      font-weight:700;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(13,22,39,.92), rgba(12,18,31,.96));
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px 20px 20px;
+      margin:22px 0;
+      box-shadow:0 10px 26px rgba(0,0,0,0.16);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:1.7rem;
+      letter-spacing:-0.04em;
+    }
+    .card p{
+      color:var(--muted);
+      margin:0 0 14px;
+    }
+    .utility-grid{
+      display:grid;
+      gap:16px;
+      margin-top:18px;
+    }
+    .utility-item{
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(255,255,255,0.02);
+      overflow:hidden;
+    }
+    .utility-item .head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 14px;
+      border-bottom:1px solid var(--border);
+      background:rgba(17,24,38,1);
+      font-weight:800;
+      color:var(--sql);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:.76rem;
+    }
+    footer{
+      margin-top:22px;
+      border-top:1px solid var(--border);
+      padding-top:18px;
+      color:var(--muted);
+      font-size:.93rem;
+    }
+    @media (max-width: 900px){
+      .shell{grid-template-columns:1fr}
+      .side{
+        position:static;
+        height:auto;
+        border-right:none;
+        border-bottom:1px solid var(--border);
       }
-      .sidebar {
-        position: static;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-      }
-      .main {
-        padding: 20px 18px 52px;
-      }
+      .main{padding:16px 14px 36px}
+      .top{padding:10px 12px 14px}
+      .head{position:static}
     }
   </style>
 </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="brand">MarkOps <span>Builder Guide</span></div>
-      <div class="badge">SFMC Foundations</div>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MarkOps <b>Builder Guide</b></div>
+      <span class="badge">SFMC foundations course</span>
 
-      <div class="nav-group">
+      <div class="group">
         <h3>Overview</h3>
-        <a href="#overview">Overview</a>
+        <nav class="nav">
+          <a href="#start">Start</a>
+        </nav>
       </div>
 
-      <div class="nav-group">
+      <div class="group">
         <h3>AMPscript</h3>
-        <a href="#ampscript">Fundamentals</a>
+        <nav class="nav">
+          <a href="#l1">Basics</a>
+          <a href="#l2">Lookups</a>
+          <a href="#l3">Attributes</a>
+          <a href="#l4">Logic</a>
+          <a href="#l5">Loops</a>
+          <a href="#l6">Rows</a>
+          <a href="#l7">Use case</a>
+        </nav>
       </div>
 
-      <div class="nav-group">
+      <div class="group">
         <h3>SQL</h3>
-        <a href="#sql">Fundamentals</a>
+        <nav class="nav">
+          <a href="#l8">SELECT</a>
+          <a href="#l9">Filters</a>
+          <a href="#l10">JOIN</a>
+          <a href="#l11">UNION</a>
+          <a href="#l12">Aggregates</a>
+          <a href="#l13">Dedup</a>
+          <a href="#l14">Use case</a>
+        </nav>
       </div>
 
-      <div class="nav-group">
+      <div class="group">
         <h3>Utility</h3>
-        <a href="#utility">Utility Queries</a>
+        <nav class="nav">
+          <a href="#utility">Utility queries</a>
+        </nav>
+      </div>
+
+      <div class="group">
+        <h3>Reference</h3>
+        <nav class="nav">
+          <a href="#l15">Best practices</a>
+        </nav>
       </div>
     </aside>
 
     <main class="main">
-      <div class="content">
-        <div class="hero" id="overview">
+      <div class="top">
+        <div class="title">SFMC interactive foundations course</div>
+        <a class="repo" href="https://github.com/kenxavierr/markops-builder-guide" target="_blank" rel="noreferrer">Repository</a>
+      </div>
+
+      <div class="content" id="start">
+        <div class="hero">
+          <div class="eyebrow">Salesforce Marketing Cloud</div>
           <h1>Build smarter campaigns with AMPscript and SQL.</h1>
           <p>
-            This guide is designed for marketers and campaign builders working in Salesforce Marketing Cloud.
-            Learn the basics, then use clean and practical SQL utilities for audience checks, volume review,
-            and deduplication.
+            A premium practical course for marketers and campaign builders. Learn the foundations,
+            then apply each concept to common email and audience use cases.
           </p>
+          <div class="stats">
+            <div class="stat"><b>15</b> lessons</div>
+            <div class="stat"><b>7</b> AMPscript</div>
+            <div class="stat"><b>7</b> SQL</div>
+            <div class="stat"><b>1</b> checklist</div>
+          </div>
+          <div class="tools">
+            <button class="tab active" type="button">All</button>
+            <button class="tab" type="button">AMPscript</button>
+            <button class="tab" type="button">SQL</button>
+          </div>
         </div>
 
-        <section id="ampscript">
-          <h2>AMPscript Fundamentals</h2>
-          <div class="two-col">
-            <div class="chip"><strong>Variable setup</strong>Use variables to store customer or campaign values.</div>
-            <div class="chip"><strong>Lookup logic</strong>Pull data from a Data Extension with a single key.</div>
-            <div class="chip"><strong>Conditional logic</strong>Display different content by customer tier or segment.</div>
-            <div class="chip"><strong>Loops</strong>Repeat content for multiple rows or recommendations.</div>
+        <section class="lesson" id="l1" data-type="ampscript">
+          <div class="head">
+            <div class="crumb">AMPscript / Foundation / Syntax</div>
+            <div class="num">Lesson 01</div>
           </div>
-
-          <div class="code-box">
-            <div class="code-header">AMPscript example</div>
-            <pre><code>%%[
+          <div class="body">
+            <div class="marker"><i></i>Core syntax and variable setup</div>
+            <details open>
+              <summary>Initialize and display a variable</summary>
+              <div class="summary">
+                Use <strong>%%[ ]%%</strong> blocks, <strong>var</strong>, <strong>set</strong>, and <strong>v()</strong> to build readable, reusable logic.
+              </div>
+              <div class="code">
+                <div class="codebar">AMPscript <button class="copy">Copy</button></div>
+                <pre class="src">%%[
   var @firstName, @city
-
   set @firstName = "Sarah"
   set @city = "Singapore"
 ]%%
-
-Hello %%=v(@firstName)=%% from %%=v(@city)=%%!</code></pre>
+Hello %%=v(@firstName)=%% from %%=v(@city)=%%!</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l1"> I understand this lesson</div>
+              <div class="actions"><a href="#l2">Next →</a></div>
+            </div>
           </div>
         </section>
 
-        <section id="sql">
-          <h2>SQL Fundamentals</h2>
-          <p>SQL helps you filter, segment, and prepare data before sending or creating target audiences.</p>
+        <section class="lesson" id="l2" data-type="ampscript">
+          <div class="head">
+            <div class="crumb">AMPscript / Data Extensions / Lookups</div>
+            <div class="num">Lesson 02</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Bring customer data into an email</div>
+            <details open>
+              <summary>Lookup values from a DE</summary>
+              <div class="summary">
+                Use <strong>Lookup()</strong> for one matching value, and keep your logic readable.
+              </div>
+              <div class="code">
+                <div class="codebar">AMPscript <button class="copy">Copy</button></div>
+                <pre class="src">%%[
+  var @subscriberKey, @firstName
+  set @subscriberKey = AttributeValue("SubscriberKey")
+  set @firstName = Lookup("ENT.CustomerMaster","FirstName","SubscriberKey",@subscriberKey)
+]%%
+Hi %%=v(@firstName)=%%,</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l2"> I understand this lesson</div>
+              <div class="actions"><a href="#l1">← Previous</a> <a href="#l3">Next →</a></div>
+            </div>
+          </div>
+        </section>
 
-          <div class="code-box">
-            <div class="code-header">SELECT from a Data Extension</div>
-            <pre><code>SELECT
+        <section class="lesson" id="l3" data-type="ampscript">
+          <div class="head">
+            <div class="crumb">AMPscript / Foundation / Send attributes</div>
+            <div class="num">Lesson 03</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Read attributes safely</div>
+            <details open>
+              <summary>AttributeValue and fallback logic</summary>
+              <div class="summary">
+                Use <strong>AttributeValue()</strong> and fallback logic to handle missing values safely.
+              </div>
+              <div class="code">
+                <div class="codebar">AMPscript <button class="copy">Copy</button></div>
+                <pre class="src">%%[
+  var @firstName
+  set @firstName = AttributeValue("FirstName")
+  if Empty(@firstName) then
+    set @firstName = "there"
+  endif
+]%%
+Hello %%=v(@firstName)=%%!</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l3"> I understand this lesson</div>
+              <div class="actions"><a href="#l2">← Previous</a> <a href="#l4">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson" id="l4" data-type="ampscript">
+          <div class="head">
+            <div class="crumb">AMPscript / Logic / Conditional content</div>
+            <div class="num">Lesson 04</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>IF, ELSEIF, and ELSE logic</div>
+            <details open>
+              <summary>Show the right message</summary>
+              <div class="summary">
+                Change content based on customer tier or country.
+              </div>
+              <div class="code">
+                <div class="codebar">AMPscript <button class="copy">Copy</button></div>
+                <pre class="src">%%[
+  var @tier
+  set @tier = "Silver"
+]%%
+%%[ if @tier == "Gold" then ]%%
+  Gold member pricing is active.
+%%[ elseif @tier == "Silver" then ]%%
+  Silver member pricing is active.
+%%[ else ]%%
+  Standard pricing applies.
+%%[ endif ]%%</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l4"> I understand this lesson</div>
+              <div class="actions"><a href="#l3">← Previous</a> <a href="#l5">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson" id="l5" data-type="ampscript">
+          <div class="head">
+            <div class="crumb">AMPscript / Collections / Repetition</div>
+            <div class="num">Lesson 05</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Repeat content with FOR loops</div>
+            <details open>
+              <summary>Render multiple items</summary>
+              <div class="summary">Repeat content with a loop and keep output easy to maintain.</div>
+              <div class="code">
+                <div class="codebar">AMPscript <button class="copy">Copy</button></div>
+                <pre class="src">%%[
+  var @i
+  for @i = 1 to 3 do
+]%%
+  Recommendation %%=v(@i)=%%&lt;br&gt;
+%%[ next @i ]%%</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l5"> I understand this lesson</div>
+              <div class="actions"><a href="#l4">← Previous</a> <a href="#l6">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson" id="l6" data-type="ampscript">
+          <div class="head">
+            <div class="crumb">AMPscript / Data Extensions / Multiple rows</div>
+            <div class="num">Lesson 06</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Work with multiple rows</div>
+            <details open>
+              <summary>Use LookupRows and RowCount</summary>
+              <div class="summary">
+                Display a product list by iterating through matching rows.
+              </div>
+              <div class="code">
+                <div class="codebar">AMPscript <button class="copy">Copy</button></div>
+                <pre class="src">%%[
+  var @rows, @row, @i, @name
+  set @rows = LookupRows("ENT.ProductCatalog","Category","Apparel")
+  for @i = 1 to RowCount(@rows) do
+    set @row = Row(@rows,@i)
+    set @name = Field(@row,"ProductName")
+]%%
+  Product: %%=v(@name)=%%&lt;br&gt;
+%%[ next @i ]%%</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l6"> I understand this lesson</div>
+              <div class="actions"><a href="#l5">← Previous</a> <a href="#l7">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson" id="l7" data-type="ampscript">
+          <div class="head">
+            <div class="crumb">AMPscript / Applied practice / Email use case</div>
+            <div class="num">Lesson 07</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Personalize an email offer</div>
+            <details open>
+              <summary>Build a campaign offer</summary>
+              <div class="summary">
+                Combine lookup and conditional logic in one practical workflow.
+              </div>
+              <div class="code">
+                <div class="codebar">AMPscript <button class="copy">Copy</button></div>
+                <pre class="src">%%[
+  var @tier, @offer
+  set @tier = Lookup("ENT.CustomerMaster","CustomerTier","SubscriberKey",AttributeValue("SubscriberKey"))
+  if @tier == "Gold" then
+    set @offer = "Enjoy 20% off."
+  elseif @tier == "Silver" then
+    set @offer = "Enjoy 10% off."
+  else
+    set @offer = "Explore our latest offers."
+  endif
+]%%
+&lt;p&gt;%%=v(@offer)=%%&lt;/p&gt;</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l7"> I understand this lesson</div>
+              <div class="actions"><a href="#l6">← Previous</a> <a href="#l8">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson" id="l8" data-type="sql">
+          <div class="head">
+            <div class="crumb">SQL / Foundation / Query Activity</div>
+            <div class="num">Lesson 08</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Select fields and source DE</div>
+            <details open>
+              <summary>SELECT and FROM</summary>
+              <div class="summary">
+                Choose the right fields and the correct source Data Extension.
+              </div>
+              <div class="code">
+                <div class="codebar">SQL <button class="copy">Copy</button></div>
+                <pre class="src">SELECT
   SubscriberKey,
   EmailAddress,
   FirstName,
   LastName
-FROM ent.CustomerMaster</code></pre>
-          </div>
-
-          <div class="code-box">
-            <div class="code-header">WHERE filters</div>
-            <pre><code>SELECT
-  SubscriberKey,
-  EmailAddress,
-  FirstName
-FROM ent.CustomerMaster
-WHERE IsActive = 1
-  AND Country = 'Malaysia'</code></pre>
+FROM ent.CustomerMaster</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l8"> I understand this lesson</div>
+              <div class="actions"><a href="#l7">← Previous</a> <a href="#l9">Next →</a></div>
+            </div>
           </div>
         </section>
 
-        <section id="utility">
-          <h2>Utility Queries</h2>
-          <p>These are helpful when checking statuses, reviewing data volume, and removing duplicate records before you build a final audience.</p>
+        <section class="lesson" id="l9" data-type="sql">
+          <div class="head">
+            <div class="crumb">SQL / Foundation / Filtering</div>
+            <div class="num">Lesson 09</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Build a focused audience</div>
+            <details open>
+              <summary>WHERE filters and conditions</summary>
+              <div class="summary">
+                Filter active and regional customers before sending or segmenting.
+              </div>
+              <div class="code">
+                <div class="codebar">SQL <button class="copy">Copy</button></div>
+                <pre class="src">SELECT
+  SubscriberKey,
+  EmailAddress,
+  FirstName,
+  Country
+FROM ent.CustomerMaster
+WHERE IsActive = 1
+  AND Country = 'Malaysia'
+  AND EmailAddress IS NOT NULL</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l9"> I understand this lesson</div>
+              <div class="actions"><a href="#l8">← Previous</a> <a href="#l10">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson" id="l10" data-type="sql">
+          <div class="head">
+            <div class="crumb">SQL / Combining data / JOIN</div>
+            <div class="num">Lesson 10</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Connect customer and order data</div>
+            <details open>
+              <summary>LEFT JOIN related data</summary>
+              <div class="summary">
+                Use a LEFT JOIN to retain all left-side rows while matching order records.
+              </div>
+              <div class="code">
+                <div class="codebar">SQL <button class="copy">Copy</button></div>
+                <pre class="src">SELECT
+  c.SubscriberKey,
+  c.EmailAddress,
+  c.FirstName,
+  o.OrderID,
+  o.TotalAmount
+FROM ent.CustomerMaster c
+LEFT JOIN ent.CustomerOrders o
+  ON c.SubscriberKey = o.SubscriberKey</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l10"> I understand this lesson</div>
+              <div class="actions"><a href="#l9">← Previous</a> <a href="#l11">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson" id="l11" data-type="sql">
+          <div class="head">
+            <div class="crumb">SQL / Combining data / UNION</div>
+            <div class="num">Lesson 11</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Stack comparable result sets</div>
+            <details open>
+              <summary>UNION and UNION ALL</summary>
+              <div class="summary">
+                Combine regional audiences while keeping the schema consistent.
+              </div>
+              <div class="code">
+                <div class="codebar">SQL <button class="copy">Copy</button></div>
+                <pre class="src">SELECT
+  SubscriberKey,
+  EmailAddress,
+  FirstName,
+  Country
+FROM ent.Customers_Singapore
+
+UNION ALL
+
+SELECT
+  SubscriberKey,
+  EmailAddress,
+  FirstName,
+  Country
+FROM ent.Customers_Malaysia</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l11"> I understand this lesson</div>
+              <div class="actions"><a href="#l10">← Previous</a> <a href="#l12">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson" id="l12" data-type="sql">
+          <div class="head">
+            <div class="crumb">SQL / Analysis / Aggregates</div>
+            <div class="num">Lesson 12</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Summarize campaign data</div>
+            <details open>
+              <summary>COUNT, SUM, and GROUP BY</summary>
+              <div class="summary">
+                Aggregate campaign spend and order counts by customer.
+              </div>
+              <div class="code">
+                <div class="codebar">SQL <button class="copy">Copy</button></div>
+                <pre class="src">SELECT
+  SubscriberKey,
+  COUNT(OrderID) AS OrderCount,
+  SUM(TotalAmount) AS TotalSpend
+FROM ent.CustomerOrders
+GROUP BY SubscriberKey</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l12"> I understand this lesson</div>
+              <div class="actions"><a href="#l11">← Previous</a> <a href="#l13">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson" id="l13" data-type="sql">
+          <div class="head">
+            <div class="crumb">SQL / Data quality / Deduplication</div>
+            <div class="num">Lesson 13</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Keep only the preferred row</div>
+            <details open>
+              <summary>Use ROW_NUMBER and PARTITION BY</summary>
+              <div class="summary">
+                Keep the latest record per customer before building an audience.
+              </div>
+              <div class="code">
+                <div class="codebar">SQL <button class="copy">Copy</button></div>
+                <pre class="src">SELECT
+  SubscriberKey,
+  EmailAddress,
+  UpdatedDate
+FROM (
+  SELECT *,
+  ROW_NUMBER() OVER (
+    PARTITION BY SubscriberKey
+    ORDER BY UpdatedDate DESC
+  ) AS RowNum
+  FROM ent.CustomerMaster
+) x
+WHERE RowNum = 1</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l13"> I understand this lesson</div>
+              <div class="actions"><a href="#l12">← Previous</a> <a href="#l14">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson" id="l14" data-type="both">
+          <div class="head">
+            <div class="crumb">Applied practice / Audience activation</div>
+            <div class="num">Lesson 14</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Build an audience and personalize an email</div>
+            <details open>
+              <summary>Query segment + AMPscript email</summary>
+              <div class="summary">
+                Segment a clean audience first, then personalize the email with AMPscript.
+              </div>
+              <div class="code">
+                <div class="codebar">SQL <button class="copy">Copy</button></div>
+                <pre class="src">SELECT
+  c.SubscriberKey,
+  c.EmailAddress,
+  c.FirstName,
+  c.Country
+FROM ent.CustomerMaster c
+WHERE c.IsActive = 1
+  AND c.EmailAddress IS NOT NULL
+  AND c.OptedIn = 1</pre>
+              </div>
+              <div class="code">
+                <div class="codebar">AMPscript <button class="copy">Copy</button></div>
+                <pre class="src">%%[
+  var @name, @tier
+  set @name = AttributeValue("FirstName")
+  set @tier = AttributeValue("CustomerTier")
+]%%
+Hi %%=v(@name)=%%,
+Your %%=v(@tier)=%% member benefits are ready.</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l14"> I understand this lesson</div>
+              <div class="actions"><a href="#l13">← Previous</a> <a href="#l15">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson" id="l15" data-type="both">
+          <div class="head">
+            <div class="crumb">Reference / Quality checklist</div>
+            <div class="num">Lesson 15</div>
+          </div>
+          <div class="body">
+            <div class="marker"><i></i>Best practices and launch checklist</div>
+            <details open>
+              <summary>Practice what matters before sending</summary>
+              <div class="summary">
+                Confirm field names, filter early, test in preview mode, document logic, and validate before launch.
+              </div>
+              <div class="code">
+                <div class="codebar">Reference list</div>
+                <pre class="src">- Confirm DE names and required fields
+- Filter early in SQL
+- Test in preview mode
+- Use readable aliases
+- Validate nulls, duplicates, and active status
+- Keep audience logic easy to review</pre>
+              </div>
+            </details>
+            <div class="checkpoints">
+              <div class="checkpoint"><input type="checkbox" data-lesson="l15"> I understand this lesson</div>
+              <div class="actions"><a href="#l14">← Previous</a> <a href="#utility">Next →</a></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="utility">
+          <h2>Utility queries</h2>
+          <p>These helper queries are useful for quick QA checks, campaign volume reviews, and deduplicating rows before writing final audience logic.</p>
 
           <div class="utility-grid">
             <div class="utility-item">
-              <div class="header">Query 1 · Status count check</div>
-              <pre><code>SELECT
+              <div class="head">Query 1 · Status count check</div>
+              <div class="code">
+                <pre class="src">SELECT
   a.Status,
   COUNT(*) AS Cnt
 FROM DEName a
 WHERE a.Status IN ('Active', 'Cancelled')
-GROUP BY a.Status</code></pre>
+GROUP BY a.Status</pre>
+              </div>
             </div>
 
             <div class="utility-item">
-              <div class="header">Query 2 · Campaign status volume</div>
-              <pre><code>SELECT
+              <div class="head">Query 2 · Campaign status volume</div>
+              <div class="code">
+                <pre class="src">SELECT
   a.CampaignCode__c,
   a.Status,
   COUNT(*) AS Cnt
@@ -358,32 +1003,38 @@ WHERE a.CampaignCode__c = '000000123'
   AND a.Status IN ('Active', 'Cancelled')
 GROUP BY
   a.CampaignCode__c,
-  a.Status</code></pre>
+  a.Status</pre>
+              </div>
             </div>
 
             <div class="utility-item">
-              <div class="header">Query 3 · Total record volume by status</div>
-              <pre><code>SELECT
+              <div class="head">Query 3 · Total record volume by status</div>
+              <div class="code">
+                <pre class="src">SELECT
   a.Status,
   COUNT(*) AS TotalVolume
 FROM ent.Salesforce_Sample a
 GROUP BY a.Status
-ORDER BY TotalVolume DESC</code></pre>
+ORDER BY TotalVolume DESC</pre>
+              </div>
             </div>
 
             <div class="utility-item">
-              <div class="header">Query 4 · Volume by campaign code</div>
-              <pre><code>SELECT
+              <div class="head">Query 4 · Volume by campaign code</div>
+              <div class="code">
+                <pre class="src">SELECT
   a.CampaignCode__c,
   COUNT(*) AS TotalRecords
 FROM ent.Salesforce_Sample a
 GROUP BY a.CampaignCode__c
-ORDER BY TotalRecords DESC</code></pre>
+ORDER BY TotalRecords DESC</pre>
+              </div>
             </div>
 
             <div class="utility-item">
-              <div class="header">Query 5 · Deduplicate records</div>
-              <pre><code>SELECT
+              <div class="head">Query 5 · Deduplicate records</div>
+              <div class="code">
+                <pre class="src">SELECT
   SubscriberKey,
   EmailAddress,
   FirstName,
@@ -400,10 +1051,15 @@ FROM (
     ) AS rn
   FROM ent.CustomerMaster
 ) x
-WHERE x.rn = 1</code></pre>
+WHERE x.rn = 1</pre>
+              </div>
             </div>
           </div>
         </section>
+
+        <footer>
+          Repository: <a href="https://github.com/kenxavierr/markops-builder-guide">github.com/kenxavierr/markops-builder-guide</a>
+        </footer>
       </div>
     </main>
   </div>
